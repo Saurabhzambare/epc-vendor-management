@@ -6,13 +6,11 @@
 
 ## Current Phase
 
-**Phase 0 — Environment Verification & Repository Hygiene** (see ROADMAP.md)
+**Phase 1 — C# Interview Fast-Track (console warm-up)** — Phase 0 completed 2026-07-14 (see ROADMAP.md)
 
 ## Current Objective
 
-1. Install SQL Server Developer edition + SSMS (engine confirmed missing — see Blockers).
-2. Confirm Visual Studio 2022 with the "ASP.NET and web development" workload, and GitHub Desktop.
-3. Begin Phase 1 (C# warm-up) immediately — it needs no database, so it runs in parallel with the installs.
+Build the warm-up console project step by step: model `Vendor`/`Project`/`Employee`, an `IApprovable` interface, LINQ drills over in-memory lists, first xUnit tests. Saurabh types the code locally with guided explanation.
 
 **Interview timeline: expected within the week** — Phases 1–2 are the priority; everything else serves them.
 
@@ -23,12 +21,15 @@
 - Documentation foundation created: README, ROADMAP, CURRENT_STATUS, AGENTS, CLAUDE at root; ARCHITECTURE, SETUP, DATABASE, TESTING, SECURITY, INTERVIEW_GUIDE, DECISIONS, PORTFOLIO_NOTES, API_AND_WORKFLOWS, UI_UX under `docs/`.
 - Initial architecture decision recorded (DECISIONS.md #001: single web project + test project).
 - .NET-appropriate `.gitignore` added.
-- **Environment verification (2026-07-14, partial):**
-  - ✅ .NET 8 SDK `8.0.422` (x64) — verified via `dotnet --version` / `--info`
+- **Phase 0 environment verification — COMPLETE (2026-07-14):**
+  - ✅ .NET 8 SDK `8.0.422` (x64)
   - ✅ Git `2.55.0.windows.2`
   - ✅ Windows 11 (build 10.0.28120), x64
-  - ❌ SQL Server database engine **not installed** — only `SQLWriter` (VSS backup helper) found; no `MSSQLSERVER`/`SQLEXPRESS` service
-  - ❓ Not yet verified: Visual Studio 2022 + ASP.NET workload, SSMS, GitHub Desktop
+  - ✅ SQL Server 2025 Developer, **default instance** `MSSQLSERVER`, service Running → connection string uses `Server=localhost`
+  - ✅ SSMS 22 (22.7.2) connects to `localhost` via Windows Authentication (verified in Object Explorer)
+  - ✅ Visual Studio Community 2026 (18.7.3) installed
+  - ✅ GitHub Desktop installed, repo cloned (fetch of the docs branch pending)
+  - Note: `SQL Server Browser`/`Agent` services Stopped — normal; not needed for a default instance / this project
 
 ## In Progress
 
@@ -36,9 +37,10 @@
 
 ## Known Issues / Blockers
 
-- **Blocker for Phase 2 only:** SQL Server database engine is not installed (the `SQL Server VSS Writer` service found is a backup helper, not the engine). Fix: install SQL Server 2022 Developer edition + SSMS per `docs/SETUP.md` §4–5. Phase 1 is NOT blocked — it needs no database.
-- Visual Studio / SSMS / GitHub Desktop presence still unverified.
-- Repository rename to `epc-vendor-management` agreed; to be done by Saurabh on GitHub (Settings → General → Rename) — cosmetic, not blocking.
+- No blockers. Two small pending items:
+  - Confirm the **"ASP.NET and web development"** workload in Visual Studio Installer → Modify (needed for Phase 2, not Phase 1).
+  - Repository rename to `epc-vendor-management` on GitHub (Settings → General → Rename) — cosmetic.
+- Docs foundation lives on branch `claude/epc-setup-roadmap-cx782w`; recommend PR → merge to `main` before branching `feature/csharp-warmup`.
 
 ## Tests
 
@@ -69,4 +71,4 @@ git status              # check working tree before any change
 
 ## Recommended Next Task
 
-**Start the SQL Server Developer + SSMS install (it can download in the background), and while it runs, begin the Phase 1 C# warm-up** — with an interview expected within the week, C#/OOP/LINQ fluency is the highest-value work and needs no database.
+**Phase 1, step 1 (Saurabh, locally):** merge the docs branch to `main` via PR, create `feature/csharp-warmup`, then `dotnet new console -n Warmup -o src/Warmup` and run it — understanding `Program.cs` top-level statements and the `.csproj` before writing any classes.
