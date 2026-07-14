@@ -16,6 +16,8 @@ Build the warm-up console project step by step: model `Vendor`/`Project`/`Employ
 
 ## Completed
 
+- **Phase 1, step 1 (2026-07-14, verified by Saurabh):** docs PR merged to `main`; `feature/csharp-warmup` branch created; `src/Warmup` console project created (`dotnet new console` → "created successfully", `dotnet run` → `Hello, World!`); top-level statements explained. Visual Studio "ASP.NET and web development" workload confirmed installed — Phase 2 fully unblocked.
+
 - Repository assessed: previously a Git-tutorial "Hello-World" repo with a single README and **no application code** — nothing to preserve except history.
 - Project purpose, roadmap, and architecture direction defined.
 - Documentation foundation created: README, ROADMAP, CURRENT_STATUS, AGENTS, CLAUDE at root; ARCHITECTURE, SETUP, DATABASE, TESTING, SECURITY, INTERVIEW_GUIDE, DECISIONS, PORTFOLIO_NOTES, API_AND_WORKFLOWS, UI_UX under `docs/`.
@@ -37,10 +39,7 @@ Build the warm-up console project step by step: model `Vendor`/`Project`/`Employ
 
 ## Known Issues / Blockers
 
-- No blockers. Two small pending items:
-  - Confirm the **"ASP.NET and web development"** workload in Visual Studio Installer → Modify (needed for Phase 2, not Phase 1).
-  - Repository rename to `epc-vendor-management` on GitHub (Settings → General → Rename) — cosmetic.
-- Docs foundation lives on branch `claude/epc-setup-roadmap-cx782w`; recommend PR → merge to `main` before branching `feature/csharp-warmup`.
+- No blockers. Repo renamed to `epc-vendor-management` (done); VS workload confirmed; docs merged to `main` via PR #1.
 
 ## Tests
 
@@ -71,4 +70,4 @@ git status              # check working tree before any change
 
 ## Recommended Next Task
 
-**Phase 1, step 1 (Saurabh, locally):** merge the docs branch to `main` via PR, create `feature/csharp-warmup`, then `dotnet new console -n Warmup -o src/Warmup` and run it — understanding `Program.cs` top-level statements and the `.csproj` before writing any classes.
+**Phase 1, step 2 (Saurabh, locally, on `feature/csharp-warmup`):** write the `Vendor` class (`src/Warmup/Vendor.cs`) with properties, a constructor, an enum category, and a nullable contact field; create a `List<Vendor>` in `Program.cs` and print active vendors with string interpolation. Concepts: properties, constructors, nullable reference types (INTERVIEW_GUIDE entries added).

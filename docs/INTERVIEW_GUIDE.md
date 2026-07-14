@@ -70,6 +70,64 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** After Phase 3, demonstrate the 401-vs-403 difference with two curl/browser experiments.
 
+### Interview concept: Top-level statements
+
+**Simple meaning:** Since C# 9, a console app's entry file can be plain statements — the compiler writes the wrapping `Program` class and `Main` method for you.
+
+**Technical meaning:** The compiler synthesizes `internal class Program { private static void Main(string[] args) { ... } }` around the top-level code; only one file per project may use them. Older projects use the explicit form.
+
+**Where we used it:** `src/Warmup/Program.cs` (Phase 1, 2026-07-14).
+
+**Likely question:** "Where is the Main method in your console app?"
+
+**Strong answer:** "It's generated — the file uses top-level statements, so the compiler wraps my code in a synthesized `Program.Main`. In .NET Framework or older codebases I'd write `static void Main(string[] args)` explicitly; both compile to the same entry point."
+
+**Follow-ups:** Can two files have top-level statements? (No — compile error.) How do you read command-line args? (`args` is available implicitly.)
+
+**Common mistake:** Thinking the program "has no Main" or that top-level statements are a scripting mode — it's still a normal compiled program.
+
+**Practice task:** Convert Warmup's `Program.cs` to an explicit `Main` and back; confirm both run identically.
+
+### Interview concept: Properties (auto-implemented)
+
+**Simple meaning:** A property looks like a field from outside but is really a pair of get/set methods — the class keeps control over its data.
+
+**Technical meaning:** `public string Name { get; set; }` compiles to a hidden backing field plus `get_Name`/`set_Name` accessors. Variants: `{ get; }` (settable only in constructor — immutable after construction), `{ get; private set; }` (class controls writes), `{ get; init; }` (settable at object initialization).
+
+**Where we used it:** `Vendor` class in `src/Warmup` (Phase 1); later every EF Core entity maps properties to columns.
+
+**Django comparison:** Roughly where Django model fields (`models.CharField(...)`) sit, but Django fields are ORM column descriptors; C# properties are a plain language feature that EF Core *chooses* to map to columns in Phase 4.
+
+**Likely question:** "Why use a property instead of a public field?"
+
+**Strong answer:** "A property keeps the class in control: I can add validation or make the setter private later without breaking callers, data binding and EF Core work against properties, and `{ get; }`-only properties give me immutability. A public field commits me to raw access forever."
+
+**Follow-ups:** What does the compiler generate? Difference between `{ get; }` and `{ get; init; }`?
+
+**Common mistake:** Calling a property "a variable"; not knowing accessors are methods under the hood (which is what makes encapsulation real).
+
+**Practice task:** Give `Vendor.IsActive` a private setter and expose `Deactivate()` — encapsulating the state change.
+
+### Interview concept: Nullable reference types (`string?`)
+
+**Simple meaning:** By default the compiler treats reference types as never-null; adding `?` declares "this may legitimately be null," and the compiler warns wherever you forget to check.
+
+**Technical meaning:** A compile-time annotation + flow analysis feature (`<Nullable>enable</Nullable>` in the .csproj, on by default in .NET 6+ templates). No runtime difference — it's static analysis against `NullReferenceException`, C#'s answer to the "billion-dollar mistake."
+
+**Where we used it:** `Vendor.ContactEmail` is `string?` (optional); `Name` is non-nullable and must be set in the constructor.
+
+**Django comparison:** Like `null=True` on a model field, but enforced by the compiler across *all* code, not just the database schema — closer in spirit to Python type hints with `Optional[str]` checked by mypy, except it's built into the language.
+
+**Likely question:** "What does `string?` mean and what problem does it solve?"
+
+**Strong answer:** "It marks a reference that may be null. With nullable reference types enabled, everything else is assumed non-null, and the compiler warns on unguarded dereferences of nullable ones — so whole categories of `NullReferenceException` are caught at compile time instead of in production."
+
+**Follow-ups:** Runtime behavior difference? (None — warnings only.) What is the null-conditional operator `?.` / null-coalescing `??`?
+
+**Common mistake:** Confusing `string?` (annotation on a reference type) with `int?` (`Nullable<int>`, a genuinely different value-type wrapper).
+
+**Practice task:** Remove a required constructor assignment and read the compiler warning; fix it three ways (constructor, default value, make it nullable) and explain when each is right.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios
