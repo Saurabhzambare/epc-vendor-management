@@ -17,6 +17,7 @@ Build the warm-up console project step by step: model `Vendor`/`Project`/`Employ
 ## Completed
 
 - **Phase 1, step 1 (2026-07-14, verified by Saurabh):** docs PR merged to `main`; `feature/csharp-warmup` branch created; `src/Warmup` console project created (`dotnet new console` → "created successfully", `dotnet run` → `Hello, World!`); top-level statements explained. Visual Studio "ASP.NET and web development" workload confirmed installed — Phase 2 fully unblocked.
+- **Phase 1, step 2 (2026-07-14, verified by Saurabh):** `Vendor` class written with enum category, getter-only `VendorCode`, nullable `ContactEmail`, constructor; used from `Program.cs` with a `List<Vendor>`, collection initializer, and string interpolation — correct filtered output confirmed. CS8618 nullable warning deliberately triggered and understood; encapsulation reasoning for the getter-only property articulated correctly. Concepts covered: properties, constructors, enums, nullable reference types, `var`, string interpolation.
 
 - Repository assessed: previously a Git-tutorial "Hello-World" repo with a single README and **no application code** — nothing to preserve except history.
 - Project purpose, roadmap, and architecture direction defined.
@@ -70,4 +71,4 @@ git status              # check working tree before any change
 
 ## Recommended Next Task
 
-**Phase 1, step 2 (Saurabh, locally, on `feature/csharp-warmup`):** write the `Vendor` class (`src/Warmup/Vendor.cs`) with properties, a constructor, an enum category, and a nullable contact field; create a `List<Vendor>` in `Program.cs` and print active vendors with string interpolation. Concepts: properties, constructors, nullable reference types (INTERVIEW_GUIDE entries added).
+**Phase 1, step 3 (Saurabh, locally, on `feature/csharp-warmup`):** replace the `foreach`/`if` in `Program.cs` with LINQ — `Where`, `OrderBy`, `Select`, `FirstOrDefault` — plus the deferred-execution experiment. Concepts: lambda expressions, LINQ method syntax, deferred execution, `First` vs `FirstOrDefault` (INTERVIEW_GUIDE entries added).

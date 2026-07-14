@@ -128,6 +128,64 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** Remove a required constructor assignment and read the compiler warning; fix it three ways (constructor, default value, make it nullable) and explain when each is right.
 
+### Interview concept: Lambda expressions
+
+**Simple meaning:** A tiny unnamed function written inline: `v => v.IsActive` reads "given a vendor v, return whether it's active."
+
+**Technical meaning:** `(parameters) => expression-or-block`, compiled to a delegate (e.g. `Func<Vendor, bool>`) — or to an expression tree when the receiver is `IQueryable`, which is how EF Core later translates the same syntax to SQL.
+
+**Where we used it:** every LINQ call in `src/Warmup/Program.cs` (Phase 1, step 3).
+
+**Django comparison:** Python's `lambda v: v.is_active`, but statically typed; the QuerySet analogy is that `filter(is_active=True)` and `Where(v => v.IsActive)` play the same role.
+
+**Likely question:** "What is `v => v.IsActive` actually?"
+
+**Strong answer:** "A lambda — an inline anonymous function the compiler turns into a `Func<Vendor, bool>` delegate that `Where` calls per element. Against an `IQueryable` the same lambda becomes an expression tree instead, which is what lets EF Core translate it into a SQL WHERE clause."
+
+**Follow-ups:** Delegate vs. expression tree? Can lambdas capture variables? (Yes — closures.)
+
+**Common mistake:** Calling it "an arrow function that's just syntax" without knowing delegates/expression trees sit underneath — the follow-up question exists to catch that.
+
+**Practice task:** Write the same filter three ways: lambda, separate named method, and (for contrast) a `foreach`/`if` loop.
+
+### Interview concept: LINQ core methods & deferred execution
+
+**Simple meaning:** LINQ lets you query any collection like a database: filter (`Where`), sort (`OrderBy`), reshape (`Select`). The query doesn't run when you write it — it runs when you loop over it.
+
+**Technical meaning:** Extension methods on `IEnumerable<T>` composing lazily; enumeration (`foreach`, `ToList()`, `Count()`, `First...`) triggers execution. Each enumeration re-executes the query against the *current* data.
+
+**Where we used it:** `src/Warmup/Program.cs` — active-vendor query + the deferred-execution experiment (adding a vendor after defining the query, before enumerating it).
+
+**Django comparison:** QuerySets are also lazy (`.filter()` builds, iteration executes) — the concept transfers directly; the difference is LINQ works over in-memory objects too, not only the ORM.
+
+**Likely question:** "When does a LINQ query actually execute?"
+
+**Strong answer:** "On enumeration, not definition. In my warm-up I defined a query over the vendor list, added a vendor afterwards, and the new vendor appeared in the results — proof the query ran at the `foreach`, against current data. `ToList()` is how you force immediate execution and snapshot the results."
+
+**Follow-ups:** What happens if you enumerate twice? (Runs twice — with EF Core, two database hits.) Method syntax vs. query syntax? (Same thing; method syntax is what most teams use.)
+
+**Common mistake:** Calling `.ToList()` immediately everywhere "to be safe," which with EF Core fetches whole tables before filtering.
+
+**Practice task:** Predict, then verify, the output of enumerating one query before and after mutating the source list.
+
+### Interview concept: First vs. FirstOrDefault
+
+**Simple meaning:** Both grab the first match; `First` throws an exception if nothing matches, `FirstOrDefault` quietly returns null (or the type's default).
+
+**Technical meaning:** `First(predicate)` throws `InvalidOperationException` on no match; `FirstOrDefault(predicate)` returns `default(T)` — null for reference types — so its result should be typed nullable (`Vendor?`) and checked. `Single`/`SingleOrDefault` additionally throw if *more than one* matches.
+
+**Where we used it:** vendor lookup by code in `src/Warmup/Program.cs`, with a null check — this is where nullable reference types and LINQ meet.
+
+**Likely question:** "Difference between First and FirstOrDefault, and when do you use each?"
+
+**Strong answer:** "`First` throws if there's no match — right when absence is a bug and I want to fail loudly. `FirstOrDefault` returns null — right when absence is a normal case I'll handle, like a user searching for a vendor code that may not exist. The compiler then reminds me to null-check because the result is `Vendor?`."
+
+**Follow-ups:** What does `Single` add? What's `default(T)` for an `int`? (0 — which is why `FirstOrDefault` on value types can be a trap.)
+
+**Common mistake:** Using `FirstOrDefault` everywhere and forgetting the null check — trading a clear exception for a `NullReferenceException` two lines later.
+
+**Practice task:** Look up a nonexistent vendor code with both methods; observe the exception vs. the null, and handle the null path properly.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios
