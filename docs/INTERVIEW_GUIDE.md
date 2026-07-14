@@ -186,6 +186,46 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** Look up a nonexistent vendor code with both methods; observe the exception vs. the null, and handle the null path properly.
 
+### Interview concept: GroupBy and aggregates
+
+**Simple meaning:** `GroupBy` sorts items into buckets by a key (vendors by category); aggregates (`Count`, `Sum`, `Max`) then summarize each bucket.
+
+**Technical meaning:** `GroupBy(v => v.Category)` yields `IEnumerable<IGrouping<VendorCategory, Vendor>>` — each `IGrouping` has a `.Key` and is itself enumerable. SQL equivalent: `SELECT Category, COUNT(*) FROM Vendors GROUP BY Category`.
+
+**Where we used it:** active-vendors-per-category in `src/Warmup/Program.cs` (Phase 1, step 4); reappears in the Phase 6 dashboard and the DATABASE.md SQL practice set (Q2).
+
+**Django comparison:** `Vendor.objects.values('category').annotate(n=Count('id'))` — same concept; LINQ's version also works on plain in-memory lists.
+
+**Likely question:** "How would you count vendors per category — in LINQ and in SQL?"
+
+**Strong answer:** "LINQ: `vendors.GroupBy(v => v.Category)` then `group.Count()` per group — each group carries its `Key` and its members. SQL: `SELECT Category, COUNT(*) FROM Vendors GROUP BY Category`. And if I only want big categories, SQL filters groups with `HAVING`, not `WHERE` — `WHERE` runs before grouping, `HAVING` after."
+
+**Follow-ups:** WHERE vs. HAVING? What type does GroupBy return? Can you group by two keys? (Yes — anonymous type key.)
+
+**Common mistake:** Not knowing `IGrouping` has both a `Key` and the elements; in SQL, putting an aggregate condition in `WHERE`.
+
+**Practice task:** Group vendors by category *and* active flag using an anonymous-type key; write the matching SQL.
+
+### Interview concept: LINQ Join vs. SQL INNER JOIN
+
+**Simple meaning:** A join matches rows from two collections/tables where keys line up — projects matched to the employee who manages them.
+
+**Technical meaning:** `outer.Join(inner, o => o.Key, i => i.Key, (o, i) => result)` — equi-join over key selectors, like SQL `INNER JOIN ... ON`. Non-matches drop out (a project whose ManagerId matches no employee simply disappears — same as SQL). In EF Core, navigation properties + `Include` usually replace explicit `Join`, but interviews test the SQL form.
+
+**Where we used it:** projects-with-managers in `src/Warmup/Program.cs` (Phase 1, step 4) = DATABASE.md practice Q1.
+
+**Django comparison:** you rarely write joins in Django — `project.manager.name` walks a FK and the ORM emits the JOIN. EF Core navigation properties do the same in Phase 4; the warm-up writes the join by hand precisely because interviews and machine tests ask for raw SQL joins.
+
+**Likely question:** "Write a query returning each active project with its manager's name."
+
+**Strong answer:** "SQL: `SELECT p.Name, e.Name FROM Projects p INNER JOIN Employees e ON p.ManagerId = e.Id WHERE p.Status = 'Active'`. LINQ mirrors it with `Join` on the same keys — or, with EF Core entities, I'd expose a `Manager` navigation property and just project `p.Manager.Name`, letting EF generate that same JOIN."
+
+**Follow-ups:** INNER vs. LEFT join — what happens to a project with no matching manager? (INNER drops it; LEFT keeps it with NULLs — LINQ equivalent is `GroupJoin`/`DefaultIfEmpty`.)
+
+**Common mistake:** Only knowing joins through the ORM and freezing when asked for the SQL; mixing up which side LEFT preserves.
+
+**Practice task:** Add a project whose ManagerId matches nobody; show it vanishes from the join, then write the SQL LEFT JOIN that would keep it.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios
