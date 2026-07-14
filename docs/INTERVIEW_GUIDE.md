@@ -226,6 +226,46 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** Add a project whose ManagerId matches nobody; show it vanishes from the join, then write the SQL LEFT JOIN that would keep it.
 
+### Interview concept: async/await and Task
+
+**Simple meaning:** `await` says "this will take a while (network, database, disk) — don't sit idle, come back when it's done." The thread is freed to do other work in the meantime.
+
+**Technical meaning:** `Task`/`Task<T>` represents an in-flight operation (like a JS Promise). `async` enables `await` in a method; at each `await`, the compiler rewrites the rest of the method into a continuation that resumes on completion — no thread is blocked while the I/O is pending. Async is about *not wasting threads during I/O*, not about parallelism — no extra thread is created by `await`.
+
+**Where we used it:** `VendorRegistry.LoadVendorsAsync` in `src/Warmup` (Phase 1, step 5), awaited from top-level statements and from an async xUnit test. From Phase 2 on, every EF Core call (`ToListAsync`, `SaveChangesAsync`) uses it.
+
+**Django comparison:** Python's `async def`/`await` (asyncio) is a direct cognate. Classic Django views are sync-per-worker; in ASP.NET Core async is idiomatic and the default — a blocked thread is a wasted request slot under load.
+
+**Likely question:** "Why make a controller action async? Does it make the request faster?"
+
+**Strong answer:** "No — the individual request takes the same time. It makes the *server* scale better: while the database call is pending, `await` returns the thread to the pool to serve other requests instead of blocking. Under load that's the difference between handling and queueing requests. That's why EF Core calls in my controllers are `await`ed `ToListAsync`/`SaveChangesAsync`."
+
+**Follow-ups:** `Task` vs `Task<T>` vs `void`? (Never `async void` except event handlers — exceptions become uncatchable.) What does the compiler generate? (A state machine.) Difference from multithreading?
+
+**Common mistake:** Believing `async` = faster or = multithreaded; calling `.Result`/`.Wait()` on a Task (blocks, can deadlock — defeats the point).
+
+**Practice task:** Time two awaited `Task.Delay(500)` calls run sequentially vs. with `Task.WhenAll`; explain the ~500 ms difference.
+
+### Interview concept: Unit testing with xUnit (Arrange–Act–Assert)
+
+**Simple meaning:** A unit test is a small program that proves one behavior of your code: set up the situation (Arrange), do the thing (Act), check the result (Assert).
+
+**Technical meaning:** xUnit discovers `[Fact]` methods (and `[Theory]` + `[InlineData]` for parameterized cases) and runs them in isolation; `Assert.True/Equal/Null/Throws` verify outcomes. Async tests are `async Task` methods. Tests live in a separate project referencing the production code.
+
+**Where we used it:** `tests/Warmup.Tests` (Phase 1, step 5) — default-state, behavior (`Deactivate`), and async tests for `Vendor`/`VendorRegistry`. The real suite grows from Phase 2 (`DepartmentService`).
+
+**Django comparison:** `TestCase` methods with `self.assertEqual` — same discipline; xUnit favors plain classes + attributes over inheritance, and there's no implicit test database (integration tests set that up explicitly — Phase 7).
+
+**Likely question:** "What makes a good unit test?"
+
+**Strong answer:** "It tests one behavior through the public surface, is isolated — no shared state, no real network or database — fails for exactly one reason, and its name states the scenario and expectation, like `Deactivate_SetsIsActiveFalse`. I structure each test Arrange-Act-Assert so the story is readable at a glance."
+
+**Follow-ups:** `[Fact]` vs `[Theory]`? Unit vs integration test? What do you mock and why?
+
+**Common mistake:** Testing private internals instead of observable behavior; multiple unrelated asserts in one test; tests that pass without asserting anything meaningful.
+
+**Practice task:** Convert the `Deactivate` test into a `[Theory]` covering an already-inactive vendor too.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios
