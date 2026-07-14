@@ -106,6 +106,7 @@ Once `src/` exists, the flow will be:
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `'dotnet' is not recognized` | SDK not installed / stale PATH | install SDK, open a **new** terminal |
+| Service list shows only `SQL Server VSS Writer` | **Engine not installed** — VSS Writer is a backup helper that ships with various tools; it is *not* the database. (Hit for real on 2026-07-14.) | install SQL Server Developer edition; afterwards expect `SQL Server (MSSQLSERVER)` in the list |
 | No web templates in Visual Studio | missing workload | VS Installer → Modify → ASP.NET and web development |
 | SSMS cannot connect to `localhost` | wrong instance name or service stopped | try `localhost\SQLEXPRESS`; start the service in `services.msc` |
 | `A network-related or instance-specific error` at runtime | bad connection string | match the server name that works in SSMS |
