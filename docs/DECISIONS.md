@@ -48,6 +48,17 @@ Append-only. Never rewrite past entries; supersede them with a new entry.
 - **Risks:** None for this architecture.
 - **Revisitable:** Only if a separate API/SPA client is ever added.
 
+## 005 — Target net8.0 even though the .NET 10 SDK is installed
+
+- **Date:** 2026-07-14
+- **Context:** Phase 1 build output revealed the machine carries the .NET 10 SDK (installed alongside Visual Studio 2026), so `dotnet new` created the Warmup projects targeting `net10.0`. The project brief and the job description specify .NET 8 (with .NET 6 as interview knowledge).
+- **Options considered:** (a) retarget all projects to `net8.0` via `<TargetFramework>`; (b) stay on `net10.0`; (c) pin the SDK itself with a `global.json`.
+- **Selected:** (a) — set `<TargetFramework>net8.0</TargetFramework>` in every project; no `global.json` for now.
+- **Reason:** Interview credibility and JD alignment: the portfolio claims .NET 8 experience, so the code must actually target it. A newer SDK building an older target is normal, supported practice (SDK version ≠ target framework). A `global.json` pin adds friction without benefit while the 8.0.4xx SDK's presence isn't something we rely on.
+- **Consequences:** New projects created by `dotnet new` must have their TargetFramework checked/edited — added as a standing rule; Phase 2 solution will be created targeting net8.0 explicitly.
+- **Risks:** Forgetting the edit on a future project — mitigated by this record and CURRENT_STATUS notes.
+- **Revisitable:** Yes — retarget upward deliberately when .NET 10 becomes the interview-relevant LTS story.
+
 ---
 
 *Template for new entries: Title · Date · Context · Options considered · Selected approach · Reason · Consequences · Risks · Revisitable?*

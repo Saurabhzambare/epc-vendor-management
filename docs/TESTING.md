@@ -45,11 +45,12 @@ Expected: `Passed! - Failed: 0`. (Available from Phase 2.)
 
 ## Currently Tested Areas
 
-None — no code exists.
+- **Warmup (Phase 1):** `Vendor` default active state, `Deactivate()` behavior, and async `VendorRegistry.LoadVendorsAsync` — 3/3 xUnit tests passing in `tests/Warmup.Tests` (verified 2026-07-14 by Saurabh: `total: 3, failed: 0, succeeded: 3`).
 
 ## Currently Untested Areas
 
-Everything. Any claim of working software in this repo is currently **Planned**, not Tested.
+- Warmup LINQ queries in `Program.cs` (verified manually against expected output only).
+- Everything in the main application — it does not exist yet (Phase 2+).
 
 ## Manual Regression Checklist
 
