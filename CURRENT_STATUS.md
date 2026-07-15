@@ -10,10 +10,11 @@
 
 ## Current Objective
 
-1. Retarget both Warmup projects from `net10.0` to `net8.0` (see DECISIONS.md #005), verify build + tests, commit, and merge `feature/csharp-warmup` to `main` via PR.
-2. Begin Phase 2: create the `EpcVendorManagement` solution (targeting net8.0) and the Department CRUD vertical slice — the machine-test rehearsal.
+Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project + xUnit test project, both explicitly targeting `net8.0` via `dotnet new -f net8.0` (per DECISIONS.md #005) — run the template app, and tour the generated files. Then the Department vertical slice: entity → DbContext → migration → CRUD screens → service extraction → tests.
 
-**Interview timeline: expected within the week** — Phase 2 is now the highest-value work.
+**Interview timeline: expected within the week** — Phase 2 is the machine-test rehearsal; highest-value work.
+
+**Phase 1 closure (2026-07-14, verified):** retarget to `net8.0` confirmed in both csproj files, tests re-passed 3/3 on net8.0, `fix: retarget warm-up projects to net8.0` pushed, `feature/csharp-warmup` merged to `main` (PR #2).
 
 ## Completed
 
