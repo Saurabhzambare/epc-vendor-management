@@ -14,7 +14,11 @@ public class Vendor
     public string Name { get; set; }
     public VendorCategory Category { get; set; }
     public string? ContactEmail { get; set; }
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; private set; } = true;
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
 
     public Vendor(
         string vendorCode,

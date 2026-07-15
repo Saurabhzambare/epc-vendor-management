@@ -1,5 +1,13 @@
 ﻿using Warmup;
 
+Console.WriteLine("Loading vendors from registry...");
+
+var remoteVendors =
+    await VendorRegistry.LoadVendorsAsync();
+
+Console.WriteLine(
+    $"Loaded {remoteVendors.Count} vendors.\n");
+
 
 
 //vendors
@@ -10,7 +18,7 @@ var vendors = new List<Vendor>
     new Vendor("VEN-003", "Meridian IT Solutions", VendorCategory.ItServices),
 };
 
-vendors[1].IsActive = false;
+vendors[1].Deactivate();
 vendors[2].ContactEmail = "sales@meridian-it.example";
 
 // 1. Filter and sort active vendors
