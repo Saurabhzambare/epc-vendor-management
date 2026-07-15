@@ -10,7 +10,9 @@
 
 ## Current Objective
 
-Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project + xUnit test project, both explicitly targeting `net8.0` via `dotnet new -f net8.0` (per DECISIONS.md #005) — run the template app, and tour the generated files. Then the Department vertical slice: entity → DbContext → migration → CRUD screens → service extraction → tests.
+Phase 2, step 2: EF Core packages (pinned to 8.x), `Department` entity, `ApplicationDbContext`, connection string via user secrets, `InitialCreate` migration applied to local SQL Server, table verified in SSMS.
+
+**Step 1 complete (2026-07-14, verified by Saurabh):** `EpcVendorManagement` solution + Web (MVC) + Tests (xUnit) projects created with `-f net8.0` (confirmed in both csproj files); template app runs and renders; `Program.cs` services-vs-pipeline distinction understood — middleware ordering explained and added to INTERVIEW_GUIDE. Branch: `feature/solution-skeleton`.
 
 **Interview timeline: expected within the week** — Phase 2 is the machine-test rehearsal; highest-value work.
 

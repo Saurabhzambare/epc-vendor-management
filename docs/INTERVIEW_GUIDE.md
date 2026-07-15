@@ -266,6 +266,46 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** Convert the `Deactivate` test into a `[Theory]` covering an already-inactive vendor too.
 
+### Interview concept: Middleware pipeline and why order matters
+
+**Simple meaning:** Every request walks through a fixed line of checkpoints (middleware) in the order they're registered — and the response walks back out through the same line in reverse. A checkpoint can pass the request along, change it, or stop it right there.
+
+**Technical meaning:** `Program.cs` composes delegates via `app.Use...`; each middleware receives the request and a `next` delegate. Order defines semantics: `UseAuthentication` must precede `UseAuthorization` (you can't check permissions for an unidentified user); the exception handler is registered first so its try/catch wraps *everything after it*; `UseStaticFiles` sits early to short-circuit CSS/JS requests before routing/auth work is wasted on them.
+
+**Where we used it:** `src/EpcVendorManagement.Web/Program.cs` (Phase 2); order verified against the template.
+
+**Django comparison:** the `MIDDLEWARE` list — same onion model (request top-down, response bottom-up), same order-sensitivity (`AuthenticationMiddleware` before permission checks). The concept transfers 1:1; ASP.NET Core just expresses it as code instead of a settings list.
+
+**Likely question:** "Why must UseAuthentication come before UseAuthorization?"
+
+**Strong answer:** "Middleware runs in registration order. Authentication reads the cookie and builds the user principal; authorization then evaluates that principal against the endpoint's requirements. Reversed, authorization would evaluate an anonymous user and reject everyone. Same logic puts the exception handler first — it can only catch exceptions from middleware registered after it."
+
+**Follow-ups:** What happens if middleware doesn't call `next`? (Short-circuit — static files does this on a hit.) Where do controllers fit? (The endpoint execution at the end of the pipeline.) Difference between `Use`, `Run`, `Map`?
+
+**Common mistake:** Treating the order as boilerplate to copy; not knowing responses traverse the pipeline in reverse.
+
+**Practice task:** Move `UseStaticFiles` after `UseAuthorization` in a throwaway branch and reason about (then observe) what changes for a CSS request.
+
+### Interview concept: DbContext, DbSet, and code-first migrations
+
+**Simple meaning:** `DbContext` is your session with the database; each `DbSet<T>` property is a table you can query with LINQ. Migrations are versioned scripts EF generates from your entity classes so the database schema follows your code.
+
+**Technical meaning:** `DbContext` combines unit-of-work (change tracking + `SaveChangesAsync` as one transaction) and repository-style access (`DbSet<T>`). `dotnet ef migrations add X` diffs the current model against the last snapshot and emits `Up()`/`Down()`; `dotnet ef database update` applies pending migrations, recorded in the `__EFMigrationsHistory` table.
+
+**Where we used it:** `Data/ApplicationDbContext.cs`, `InitialCreate` migration creating `Departments` (Phase 2).
+
+**Django comparison:** `makemigrations`/`migrate` — nearly identical mental model, including the history table (`django_migrations`). Difference worth naming: EF Core migrations are C# classes you can read and edit *before* applying, and there's no automatic per-app grouping.
+
+**Likely question:** "How do you change the database schema in EF Core?"
+
+**Strong answer:** "Code-first: I change the entity or DbContext configuration, run `dotnet ef migrations add DescriptiveName`, review the generated Up/Down methods, then `dotnet ef database update`. EF tracks applied migrations in `__EFMigrationsHistory`, so each environment applies only what it's missing. Applied migrations are never edited — schema mistakes get a new migration."
+
+**Follow-ups:** Why never edit an applied migration? (Other environments already ran the old version — the snapshot and history diverge.) What's in the ModelSnapshot? How do you roll back? (`database update PreviousMigrationName`.)
+
+**Common mistake:** Editing or deleting applied migrations; treating generated migrations as unreviewable magic.
+
+**Practice task:** Add a column to Department via a second migration; read the generated `Up()` before applying it.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios
