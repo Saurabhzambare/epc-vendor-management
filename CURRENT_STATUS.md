@@ -6,13 +6,14 @@
 
 ## Current Phase
 
-**Phase 1 — C# Interview Fast-Track (console warm-up)** — Phase 0 completed 2026-07-14 (see ROADMAP.md)
+**Phase 1 — COMPLETE (2026-07-14). Phase 2 — Solution Skeleton + Department CRUD — starting.** (see ROADMAP.md)
 
 ## Current Objective
 
-Build the warm-up console project step by step: model `Vendor`/`Project`/`Employee`, an `IApprovable` interface, LINQ drills over in-memory lists, first xUnit tests. Saurabh types the code locally with guided explanation.
+1. Retarget both Warmup projects from `net10.0` to `net8.0` (see DECISIONS.md #005), verify build + tests, commit, and merge `feature/csharp-warmup` to `main` via PR.
+2. Begin Phase 2: create the `EpcVendorManagement` solution (targeting net8.0) and the Department CRUD vertical slice — the machine-test rehearsal.
 
-**Interview timeline: expected within the week** — Phases 1–2 are the priority; everything else serves them.
+**Interview timeline: expected within the week** — Phase 2 is now the highest-value work.
 
 ## Completed
 
@@ -20,6 +21,8 @@ Build the warm-up console project step by step: model `Vendor`/`Project`/`Employ
 - **Phase 1, step 2 (2026-07-14, verified by Saurabh):** `Vendor` class written with enum category, getter-only `VendorCode`, nullable `ContactEmail`, constructor; used from `Program.cs` with a `List<Vendor>`, collection initializer, and string interpolation — correct filtered output confirmed. CS8618 nullable warning deliberately triggered and understood; encapsulation reasoning for the getter-only property articulated correctly. Concepts covered: properties, constructors, enums, nullable reference types, `var`, string interpolation.
 - **Phase 1, step 3 (2026-07-14, verified by Saurabh):** LINQ `Where`/`OrderBy`/`Select`/`ToList`/`FirstOrDefault` working in `Program.cs` with correct output; deferred-execution experiment run with a **correct written prediction** (vendor added after query definition appeared in results); "when does LINQ execute" answered correctly. Concepts covered: lambdas, LINQ method syntax, projection, deferred execution, `First` vs `FirstOrDefault`, ternary operator, `is null`.
 - **Phase 1, step 4 (2026-07-14, verified by Saurabh):** `Employee` and `Project` classes added; `GroupBy` (vendors per category) and `Join` (active projects with manager) produce correct output; both SQL twins hand-written correctly (GROUP BY with WHERE; INNER JOIN with alias + ON); orphan-project experiment answered fully (INNER drops it, LEFT JOIN keeps it with NULL manager). Concepts covered: `GroupBy`/`IGrouping`, aggregates, `Join`, FK-by-convention, object initializers, WHERE vs HAVING.
+- **Phase 1, step 5 (2026-07-14, verified by Saurabh — PHASE 1 DEFINITION OF DONE MET):** `IsActive` encapsulated behind `Deactivate()` (CS0272 compile error experienced and fixed — encapsulation enforced by compiler); async `VendorRegistry.LoadVendorsAsync` awaited from top-level statements (visible latency observed); `tests/Warmup.Tests` xUnit project created and referenced; **3/3 tests passing** (`Test summary: total: 3, failed: 0, succeeded: 3`). Concepts covered: async/await, `Task<T>`, top-level await, `[Fact]`, Arrange-Act-Assert, async tests.
+- **Finding from step 5 build output:** machine has the **.NET 10 SDK** (10.0.301, via VS 2026); templates created Warmup projects targeting `net10.0` instead of the project-standard `net8.0`. Decision + fix recorded as DECISIONS.md #005; retarget pending (see Current Objective).
 
 - Repository assessed: previously a Git-tutorial "Hello-World" repo with a single README and **no application code** — nothing to preserve except history.
 - Project purpose, roadmap, and architecture direction defined.
@@ -73,4 +76,4 @@ git status              # check working tree before any change
 
 ## Recommended Next Task
 
-**Phase 1, step 5 — final warm-up step (Saurabh, locally, on `feature/csharp-warmup`):** encapsulate `Vendor.IsActive` behind `Deactivate()`; add an async `VendorRegistry.LoadVendorsAsync`; create `tests/Warmup.Tests` (xUnit) with 3 passing tests. Concepts: async/await/`Task`, `[Fact]`, Arrange-Act-Assert (INTERVIEW_GUIDE entries added). Phase 1 definition of done reached when `dotnet test` passes.
+**Retarget Warmup + Warmup.Tests to `net8.0`, re-run tests, commit, and merge `feature/csharp-warmup` to `main` via PR.** Then Phase 2 kickoff: create the `EpcVendorManagement` solution (net8.0) and begin the Department CRUD vertical slice.
