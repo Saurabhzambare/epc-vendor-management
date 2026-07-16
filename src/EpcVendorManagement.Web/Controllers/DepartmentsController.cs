@@ -1,4 +1,6 @@
 ﻿using EpcVendorManagement.Web.Data;
+using EpcVendorManagement.Web.Models.Entities;
+using EpcVendorManagement.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,5 +22,48 @@ public class DepartmentsController : Controller
             .ToListAsync();
 
         return View(departments);
+    }
+
+    public IActionResult Create()
+    {
+        return View(new DepartmentFormViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(
+        DepartmentFormViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        bool nameTaken = await _context.Departments
+            .AnyAsync(department =>
+                department.Name == model.Name);
+
+        if (nameTaken)
+        {
+            ModelState.AddModelError(
+                nameof(model.Name),
+                "A department with this name already exists.");
+
+            return View(model);
+        }
+
+        var department = new Department
+        {
+            Name = model.Name,
+            Description = model.Description,
+        };
+
+        _context.Departments.Add(department);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] =
+            $"Department '{department.Name}' created.";
+
+        return RedirectToAction(nameof(Index));
     }
 }

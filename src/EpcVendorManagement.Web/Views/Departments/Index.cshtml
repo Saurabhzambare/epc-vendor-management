@@ -13,6 +13,20 @@
     </div>
 </div>
 
+@if (TempData["Success"] is string message)
+{
+    <div class="alert alert-success">
+        @message
+    </div>
+}
+
+<p>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        New department
+    </a>
+</p>
+
 @if (!Model.Any())
 {
     <div class="alert alert-info">
