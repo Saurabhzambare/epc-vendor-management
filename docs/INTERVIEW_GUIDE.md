@@ -306,6 +306,26 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** Add a column to Department via a second migration; read the generated `Up()` before applying it.
 
+### Interview concept: Controllers, actions, and convention-based routing
+
+**Simple meaning:** A controller is the class that answers a group of related URLs; each public method (action) answers one. ASP.NET Core finds the right method from the URL by naming convention: `/Departments` → `DepartmentsController.Index()`.
+
+**Technical meaning:** The default route template `{controller=Home}/{action=Index}/{id?}` tokenizes the path, appends the `Controller` suffix, and dispatches. Actions return `IActionResult` — an abstraction over "what kind of response": `View(model)`, `RedirectToAction(...)`, `NotFound()`, `Json(...)`. Dependencies (like `ApplicationDbContext`) arrive via constructor injection from the DI container, scoped per request.
+
+**Where we used it:** `Controllers/DepartmentsController.cs` (Phase 2, step 3) — constructor-injected DbContext, async `Index` action returning a typed view.
+
+**Django comparison:** a controller ≈ a group of related Django views; `IActionResult` ≈ returning `HttpResponse`/`render()`/`redirect()`. Big difference: Django routes are *explicit* in `urls.py`; MVC's are *conventional* — no per-action registration, which is why naming matters.
+
+**Likely question:** "Walk me through what happens when a request hits `/Departments`."
+
+**Strong answer:** "The middleware pipeline runs; routing matches the default template, resolving controller=Departments, action=Index. The DI container constructs `DepartmentsController`, injecting a request-scoped `ApplicationDbContext`. `Index` awaits an EF Core query — `ToListAsync` releases the thread while SQL Server works — then returns `View(departments)`, and Razor renders the strongly-typed view inside the shared layout back through the pipeline."
+
+**Follow-ups:** Why return `IActionResult` instead of the view type? (One action can return different results — view, redirect, 404.) What DI lifetime does DbContext use and why? (Scoped — one per request, matching a unit of work.)
+
+**Common mistake:** Hunting for a urls.py-style registration and concluding routing is magic; putting queries/business logic permanently in the controller (ours moves to a service in a later step — deliberately staged).
+
+**Practice task:** Add a `Details(int id)` action and work out its URL without running the app, then verify.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios

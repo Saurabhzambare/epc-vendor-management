@@ -10,9 +10,11 @@
 
 ## Current Objective
 
-Phase 2, step 2: EF Core packages (pinned to 8.x), `Department` entity, `ApplicationDbContext`, connection string via user secrets, `InitialCreate` migration applied to local SQL Server, table verified in SSMS.
+Phase 2, step 3: `DepartmentsController` + Index (list) view — first read path from browser to SQL Server; hand-written SQL INSERT practice in SSMS; unique-index violation experiment.
 
 **Step 1 complete (2026-07-14, verified by Saurabh):** `EpcVendorManagement` solution + Web (MVC) + Tests (xUnit) projects created with `-f net8.0` (confirmed in both csproj files); template app runs and renders; `Program.cs` services-vs-pipeline distinction understood — middleware ordering explained and added to INTERVIEW_GUIDE. Branch: `feature/solution-skeleton`.
+
+**Step 2 complete (2026-07-15, verified by Saurabh):** EF Core 8.0.29 packages installed; `Department` entity + `ApplicationDbContext` (unique Name index via Fluent API); connection string in user secrets; `InitialCreate` migration created and applied — `EpcVendorManagement` DB, `dbo.Departments` (columns/types verified in SSMS), `__EFMigrationsHistory` ledger row confirmed. `[Required]`→`nullable: false` mapping answered correctly. **Real troubleshooting done solo:** first migration attempt failed on missing `Microsoft.EntityFrameworkCore.Design` reference; Saurabh diagnosed from the error, installed EF 8 Design + SqlServer packages, reran successfully (also adopted `--startup-project` explicitly).
 
 **Interview timeline: expected within the week** — Phase 2 is the machine-test rehearsal; highest-value work.
 

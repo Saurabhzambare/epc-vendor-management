@@ -1,6 +1,19 @@
 # DATABASE
 
-**Status:** Planned design. No database exists yet — this is the target model; it will be built incrementally via EF Core migrations (first table in Phase 2) and this file updated to match reality at each step.
+**Status:** In progress. The `EpcVendorManagement` database exists on local SQL Server 2025 (created 2026-07-15 via EF Core 8.0.29 migration `20260715111835_InitialCreate`). Implemented so far: **Departments** (see below). Everything else remains the target model, built incrementally via migrations.
+
+## Implemented Tables
+
+### dbo.Departments (migration `InitialCreate`, verified in SSMS 2026-07-15)
+
+| Column | Type | Constraints |
+|---|---|---|
+| Id | int | PK, identity |
+| Name | nvarchar(100) | NOT NULL, unique index `IX_Departments_Name` |
+| Description | nvarchar(500) | NULL |
+| IsActive | bit | NOT NULL |
+
+Source: `Models/Entities/Department.cs` (data annotations) + `ApplicationDbContext.OnModelCreating` (unique index via Fluent API). Audit columns arrive with the Phase 3 audit base class.
 
 ## Purpose
 
