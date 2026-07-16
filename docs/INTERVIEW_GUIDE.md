@@ -326,6 +326,46 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** Add a `Details(int id)` action and work out its URL without running the app, then verify.
 
+### Interview concept: Model binding and validation (ModelState)
+
+**Simple meaning:** When a form posts, MVC automatically fills your C# object's properties from the form fields by matching names — that's model binding. It then checks the object against its validation attributes; `ModelState.IsValid` tells you if anything failed.
+
+**Technical meaning:** Binders map request data (form fields, route values, query string) onto action parameters by name. Data annotations (`[Required]`, `[StringLength]`) are evaluated during binding into the `ModelState` dictionary — per-field errors included. Client-side, jQuery Unobtrusive Validation reads the same attributes (rendered as `data-val-*`) for instant feedback; the server check remains authoritative because clients can bypass JS.
+
+**Where we used it:** `DepartmentsController.Create(DepartmentFormViewModel model)` + `_ValidationScriptsPartial` (Phase 2, step 4). Custom rule added via `ModelState.AddModelError` for duplicate names.
+
+**Django comparison:** Django Forms — `form.is_valid()` ≈ `ModelState.IsValid`, field validators ≈ data annotations, `form.errors` ≈ `ModelState`. Near 1:1 mental model.
+
+**Likely question:** "How does validation work in ASP.NET Core MVC — client and server?"
+
+**Strong answer:** "One set of attributes on the ViewModel drives both: the tag helpers emit data-val attributes that jQuery unobtrusive validation enforces in the browser for UX, and model binding re-evaluates the same rules on the server into ModelState. I always check `ModelState.IsValid` and redisplay the form with errors when it fails — client validation is a convenience, never a security boundary. Business rules the attributes can't express, like duplicate names, I add with `ModelState.AddModelError`, and the database constraint backs the whole thing."
+
+**Follow-ups:** What if JS is disabled? Where do error messages render? (`asp-validation-for` spans / validation summary.) How do you validate across two fields?
+
+**Common mistake:** Trusting client validation alone; forgetting to return the same view with the model so the user's input survives a failed post.
+
+**Practice task:** Submit the form with dev-tools-disabled JS and confirm the server still rejects bad input.
+
+### Interview concept: ViewModels, overposting, and Post-Redirect-Get
+
+**Simple meaning:** The form binds to a small class holding only what the form should touch (ViewModel), never the database entity — so nobody can smuggle extra fields in. After a successful POST, redirect instead of rendering, so refresh doesn't resubmit.
+
+**Technical meaning:** Binding a POST directly to an entity lets an attacker add form fields for any entity property (`IsActive=false`, `Id=7`) — **overposting/mass assignment**. A ViewModel is an allowlist by construction. **PRG:** successful POSTs end in a 303-style redirect to a GET; one-shot feedback crosses the redirect via `TempData` (cookie/session-backed, survives exactly one request).
+
+**Where we used it:** `DepartmentFormViewModel` (no Id, no IsActive) + `RedirectToAction(nameof(Index))` + `TempData["Success"]` (Phase 2, step 4).
+
+**Django comparison:** overposting ≈ the risk behind careless `ModelForm` with `fields="__all__"`; PRG ≈ Django's standard redirect-after-valid-form; `TempData` ≈ the messages framework.
+
+**Likely question:** "Why not bind the form straight to your EF entity?"
+
+**Strong answer:** "Overposting: model binding fills any matching property, so a crafted request could set fields the form never showed — IsActive, or a foreign key. The ViewModel is an explicit allowlist of what users may submit, and it also carries the form's validation attributes without polluting the entity. In the action I map ViewModel → entity myself, so every settable field is a deliberate decision."
+
+**Follow-ups:** What does refresh-after-POST do without PRG? (Browser re-submits — duplicate records.) TempData vs ViewBag lifetime?
+
+**Common mistake:** `[Bind]` attribute band-aids instead of a real ViewModel; returning `View()` after a successful POST.
+
+**Practice task:** Add a hidden `IsActive` field to the rendered form via dev tools, submit, and confirm the ViewModel ignores it.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios

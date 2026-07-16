@@ -10,7 +10,9 @@
 
 ## Current Objective
 
-Phase 2, step 3: `DepartmentsController` + Index (list) view — first read path from browser to SQL Server; hand-written SQL INSERT practice in SSMS; unique-index violation experiment.
+Phase 2, step 4: the Create form — `DepartmentFormViewModel`, GET/POST actions, model binding, server+client validation, anti-forgery, duplicate-name check, Post-Redirect-Get with TempData success message.
+
+**Step 3 complete (2026-07-16, verified by Saurabh):** `DepartmentsController.Index` + strongly-typed list view + nav tag helpers; empty state rendered, then 3 rows inserted via hand-written SQL INSERT in SSMS and displayed alphabetically (OrderBy verified). Unique-index experiment: duplicate insert **predicted correctly** and rejected with Msg 2601 on `IX_Departments_Name`; database-vs-code enforcement reasoned excellently (final enforcement point, multiple writers, concurrency). Concepts: constructor DI, `IActionResult`, async EF query in action, convention routing, Razor strongly-typed views, tag helpers, empty states, identity columns.
 
 **Step 1 complete (2026-07-14, verified by Saurabh):** `EpcVendorManagement` solution + Web (MVC) + Tests (xUnit) projects created with `-f net8.0` (confirmed in both csproj files); template app runs and renders; `Program.cs` services-vs-pipeline distinction understood — middleware ordering explained and added to INTERVIEW_GUIDE. Branch: `feature/solution-skeleton`.
 
