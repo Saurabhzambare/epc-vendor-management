@@ -56,6 +56,14 @@ Expected: `Passed! - Failed: 0`. (Available from Phase 2.)
 
 *Built up per module from Phase 2 onward. Final consolidated checklist owned by Phase 7.*
 
+### Departments — Create (executed 2026-07-16 by Saurabh, all passed)
+
+- [x] Happy path: create → PRG redirect to Index, success alert, row visible in list and via SSMS SELECT (IsActive = 1)
+- [x] Client validation: empty name → instant field error, **no request sent** (verified in Network tab)
+- [x] Server validation: `data-val` attributes stripped in dev tools → POST sent, server rejects with same field error
+- [x] Duplicate name: friendly field error shown; raw SQL Msg 2601 never surfaces to the user
+- [ ] Details / Edit / Deactivate paths (step 5 — not yet built)
+
 ### Template (per screen)
 
 - [ ] Loads for authorized role; blocked for others

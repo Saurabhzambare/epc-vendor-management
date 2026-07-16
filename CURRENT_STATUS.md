@@ -10,7 +10,9 @@
 
 ## Current Objective
 
-Phase 2, step 4: the Create form — `DepartmentFormViewModel`, GET/POST actions, model binding, server+client validation, anti-forgery, duplicate-name check, Post-Redirect-Get with TempData success message.
+Phase 2, step 5 (**spec mode** — Saurabh builds from requirements, not a walkthrough): Details, Edit, and Deactivate actions for Departments, reusing the Create patterns.
+
+**Step 4 complete (2026-07-16, verified by Saurabh — all four paths tested):** Create form live. Happy path (PRG redirect + TempData alert + row confirmed via SSMS SELECT); client validation (instant error, no POST in Network tab); server validation (data-val attributes stripped via dev tools — server still rejected); duplicate path (friendly field error, raw Msg 2601 never reaches the user). Race-condition question answered correctly (AnyAsync window → index backstop; out-of-band writers). Concepts: ViewModels/overposting, model binding, ModelState, anti-forgery/CSRF, `AnyAsync`, `SaveChangesAsync`, TempData, PRG, jQuery unobtrusive validation.
 
 **Step 3 complete (2026-07-16, verified by Saurabh):** `DepartmentsController.Index` + strongly-typed list view + nav tag helpers; empty state rendered, then 3 rows inserted via hand-written SQL INSERT in SSMS and displayed alphabetically (OrderBy verified). Unique-index experiment: duplicate insert **predicted correctly** and rejected with Msg 2601 on `IX_Departments_Name`; database-vs-code enforcement reasoned excellently (final enforcement point, multiple writers, concurrency). Concepts: constructor DI, `IActionResult`, async EF query in action, convention routing, Razor strongly-typed views, tag helpers, empty states, identity columns.
 

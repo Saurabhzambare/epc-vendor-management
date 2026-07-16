@@ -24,6 +24,7 @@
 
 ## Anti-Forgery (CSRF)
 
+- **Implemented & verified (2026-07-16):** Department Create POST carries the form-tag-helper token and is guarded by `[ValidateAntiForgeryToken]`. Overposting defense verified the same day: form binds `DepartmentFormViewModel` (Name/Description only — no Id/IsActive). Global auto-validation filter still to be decided in Phase 3.
 - Razor form tag helpers emit anti-forgery tokens automatically; `[ValidateAntiForgeryToken]` (or global auto-validation filter — decided in Phase 3) on state-changing actions.
 - Ajax POSTs must send the token explicitly — documented with the first Ajax feature in Phase 6.
 
