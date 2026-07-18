@@ -62,7 +62,17 @@ Expected: `Passed! - Failed: 0`. (Available from Phase 2.)
 - [x] Client validation: empty name → instant field error, **no request sent** (verified in Network tab)
 - [x] Server validation: `data-val` attributes stripped in dev tools → POST sent, server rejects with same field error
 - [x] Duplicate name: friendly field error shown; raw SQL Msg 2601 never surfaces to the user
-- [ ] Details / Edit / Deactivate paths (step 5 — not yet built)
+### Departments — Details / Edit / Deactivate (executed 2026-07-16 by Saurabh, all passed)
+
+- [x] Details valid id: correct fields, working Back/Edit links
+- [x] Details id 999 → HTTP 404
+- [x] Edit happy path: pre-filled form, save, PRG + success alert
+- [x] Edit to existing name → friendly duplicate error, input preserved
+- [x] Edit without renaming → success (self excluded from duplicate check)
+- [x] Edit id 999 → HTTP 404
+- [x] Deactivate confirm-Cancel → no submission, still Active
+- [x] Deactivate confirm-OK → POST, `IsActive = 0` verified in SSMS (row preserved — soft delete)
+- [x] Direct GET to /Departments/Deactivate/{id} → no state change (POST-only action)
 
 ### Template (per screen)
 

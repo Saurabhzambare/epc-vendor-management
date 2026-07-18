@@ -59,6 +59,17 @@ Append-only. Never rewrite past entries; supersede them with a new entry.
 - **Risks:** Forgetting the edit on a future project — mitigated by this record and CURRENT_STATUS notes.
 - **Revisitable:** Yes — retarget upward deliberately when .NET 10 becomes the interview-relevant LTS story.
 
+## 006 — Service tests run against SQLite in-memory, not the EF InMemory provider or DbContext mocks
+
+- **Date:** 2026-07-16
+- **Context:** Extracting `DepartmentService` (Phase 2, step 6) requires a test strategy for code whose main dependency is `ApplicationDbContext`. TESTING.md deferred this choice until now.
+- **Options considered:** (a) mock `DbContext`/`DbSet`; (b) EF Core InMemory provider; (c) SQLite in-memory database; (d) real SQL Server (LocalDB) per test run.
+- **Selected:** (c) SQLite in-memory via `Microsoft.EntityFrameworkCore.Sqlite`, one open connection per test.
+- **Reason:** Mocking DbSet is brittle and tests the mock, not the query. The InMemory provider isn't relational — it ignores unique indexes and relational behavior, so our duplicate-name rules would pass tests while lying. SQLite is a real relational engine: LINQ translates, constraints (including the unique Name index) actually enforce, and it runs in milliseconds with no infrastructure. LocalDB is the higher-fidelity option but slower and Windows-tied; it remains the fallback for Phase 7 integration tests.
+- **Consequences:** Tests create the schema with `EnsureCreated()` (not migrations); minor SQL Server/SQLite dialect differences are accepted and, where they ever matter, covered later by Phase 7 integration tests against real SQL Server.
+- **Risks:** A query using a SQL-Server-only feature could pass/fail differently — mitigated by keeping provider-specific SQL out of services.
+- **Revisitable:** Yes, at Phase 7 when the integration-test database strategy is implemented.
+
 ---
 
 *Template for new entries: Title · Date · Context · Options considered · Selected approach · Reason · Consequences · Risks · Revisitable?*

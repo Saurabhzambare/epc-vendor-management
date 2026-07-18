@@ -366,6 +366,44 @@ Living document: every important concept used in the project gets an entry **in 
 
 **Practice task:** Add a hidden `IsActive` field to the rendered form via dev tools, submit, and confirm the ViewModel ignores it.
 
+### Interview concept: Dependency injection and service lifetimes
+
+**Simple meaning:** Classes don't create their own dependencies — they declare what they need in the constructor, and the framework's container supplies it. Lifetimes control how long a supplied object lives: per-call, per-request, or forever.
+
+**Technical meaning:** Registrations in `Program.cs` map abstractions to implementations: `AddScoped<IDepartmentService, DepartmentService>()`. **Transient** = new instance every resolution; **Scoped** = one instance per HTTP request; **Singleton** = one for the app's lifetime. `AddDbContext` registers scoped — one DbContext per request = one unit of work. A singleton must never depend on a scoped service (captive dependency).
+
+**Where we used it:** `Program.cs` registrations; `DepartmentsController` receiving `IDepartmentService`; `DepartmentService` receiving `ApplicationDbContext` (Phase 2, step 6).
+
+**Django comparison:** Django has no built-in DI container — you import modules directly. The interface+container approach is what makes swapping the real service for a fake in tests effortless, which is the practical payoff.
+
+**Likely question:** "Explain the three DI lifetimes and which you'd use for a DbContext."
+
+**Strong answer:** "Transient per resolution, scoped per HTTP request, singleton per application. DbContext is scoped: a request is a natural unit of work, the context's change tracking accumulates that request's changes, and it isn't thread-safe, so sharing it as a singleton would corrupt state across concurrent requests. My services are scoped too, matching the DbContext they depend on."
+
+**Follow-ups:** What's a captive dependency? Why depend on `IDepartmentService` instead of the class? (Testability + swap-ability; the controller can't 'reach around' the contract.)
+
+**Common mistake:** Registering DbContext-dependent services as singletons; being unable to say *why* DbContext is scoped beyond "that's the default".
+
+**Practice task:** Explain what would break, concretely, if `ApplicationDbContext` were a singleton under two simultaneous users.
+
+### Interview concept: Testing EF Core services (SQLite in-memory)
+
+**Simple meaning:** To test database-touching services quickly, point the same DbContext at a tiny real database that lives in memory and vanishes after the test.
+
+**Technical meaning:** `UseSqlite("DataSource=:memory:")` with a held-open connection gives each test a real relational engine: LINQ translates to SQL, unique indexes enforce, transactions work. Contrast: mocking `DbSet` tests the mock; the EF InMemory provider is non-relational and silently skips constraints — our duplicate-name test would pass even if the rule were broken. (ADR: DECISIONS.md #006.)
+
+**Where we used it:** `tests/EpcVendorManagement.Tests/DepartmentServiceTests.cs` (Phase 2, step 6).
+
+**Likely question:** "How do you unit test code that uses EF Core?"
+
+**Strong answer:** "I test through the service's public API against SQLite in-memory — a real relational database created per test, so unique constraints and query translation are genuinely exercised, in milliseconds. I avoid mocking DbContext because that verifies interactions with a fake instead of behavior. For full fidelity against SQL Server specifics, I add integration tests on a real test database — that's a separate, slower suite."
+
+**Follow-ups:** Why not the EF InMemory provider? (Non-relational — constraints don't enforce.) How do tests stay isolated? (Fresh connection + `EnsureCreated` per test.)
+
+**Common mistake:** Enormous DbSet-mocking setups; or trusting InMemory-provider green tests for constraint behavior.
+
+**Practice task:** Write a test proving two departments can't share a name — then break the service's check and watch SQLite's unique index still fail the insert.
+
 ## Question Banks (populated as phases complete)
 
 - C# / OOP · LINQ · ASP.NET Core / MVC · EF Core · SQL Server · JavaScript / jQuery / Ajax · Bootstrap · Security · Performance · Docker · Azure · Git · Debugging scenarios

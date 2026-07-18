@@ -10,7 +10,9 @@
 
 ## Current Objective
 
-Phase 2, step 5 (**spec mode** — Saurabh builds from requirements, not a walkthrough): Details, Edit, and Deactivate actions for Departments, reusing the Create patterns.
+Phase 2, step 6: extract `IDepartmentService`/`DepartmentService` (business rules out of the controller, per ARCHITECTURE.md), register in DI, refactor controller, and write xUnit service tests against SQLite in-memory (DECISIONS.md #006). Then merge `feature/solution-skeleton` via PR, then the timed rebuild drill.
+
+**Step 5 complete (2026-07-16, verified by Saurabh — spec mode, 10/10 acceptance items PASS):** Details (valid + 404), Edit (happy, duplicate, unchanged-name self-exclusion, 404 on GET and POST), Deactivate (confirm-cancel, confirm-OK, soft-delete verified `IsActive = 0` in SSMS, GET navigation cannot change state). Extras beyond spec: route-vs-hidden-Id consistency check, Deactivate button hidden for inactive rows, separate `DepartmentEditViewModel` with articulated contract reasoning. Commit `feat: add department details, edit, and deactivate actions` pushed to `feature/solution-skeleton`.
 
 **Step 4 complete (2026-07-16, verified by Saurabh — all four paths tested):** Create form live. Happy path (PRG redirect + TempData alert + row confirmed via SSMS SELECT); client validation (instant error, no POST in Network tab); server validation (data-val attributes stripped via dev tools — server still rejected); duplicate path (friendly field error, raw Msg 2601 never reaches the user). Race-condition question answered correctly (AnyAsync window → index backstop; out-of-band writers). Concepts: ViewModels/overposting, model binding, ModelState, anti-forgery/CSRF, `AnyAsync`, `SaveChangesAsync`, TempData, PRG, jQuery unobtrusive validation.
 
