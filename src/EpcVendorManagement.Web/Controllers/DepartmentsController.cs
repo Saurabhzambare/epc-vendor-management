@@ -24,6 +24,107 @@ public class DepartmentsController : Controller
         return View(departments);
     }
 
+    public async Task<IActionResult> Details(int id)
+    {
+        var department = await _context.Departments
+            .FirstOrDefaultAsync(department => department.Id == id);
+
+        if (department is null)
+        {
+            return NotFound();
+        }
+
+        return View(department);
+    }
+    public async Task<IActionResult> Edit(int id)
+    {
+        var department = await _context.Departments
+            .FirstOrDefaultAsync(department => department.Id == id);
+
+        if (department is null)
+        {
+            return NotFound();
+        }
+
+        var model = new DepartmentEditViewModel
+        {
+            Id = department.Id,
+            Name = department.Name,
+            Description = department.Description,
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, DepartmentEditViewModel model)
+    {
+        if (id != model.Id)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var department = await _context.Departments
+            .FirstOrDefaultAsync(department => department.Id == id);
+
+        if (department is null)
+        {
+            return NotFound();
+        }
+
+        bool nameTaken = await _context.Departments
+            .AnyAsync(department =>
+                department.Name == model.Name &&
+                department.Id != id);
+
+        if (nameTaken)
+        {
+            ModelState.AddModelError(
+                nameof(model.Name),
+                "A department with this name already exists.");
+
+            return View(model);
+        }
+
+        department.Name = model.Name;
+        department.Description = model.Description;
+
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] =
+            $"Department '{department.Name}' updated.";
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Deactivate(int id)
+    {
+        var department = await _context.Departments
+            .FirstOrDefaultAsync(department => department.Id == id);
+
+        if (department is null)
+        {
+            return NotFound();
+        }
+
+        department.IsActive = false;
+
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] =
+            $"Department '{department.Name}' deactivated.";
+
+        return RedirectToAction(nameof(Index));
+    }
+
     public IActionResult Create()
     {
         return View(new DepartmentFormViewModel());
