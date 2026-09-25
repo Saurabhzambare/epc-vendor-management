@@ -1,79 +1,64 @@
 # EPC Project & Vendor Management System
 
-An enterprise-style **EPC (Engineering, Procurement, Construction) project and vendor management application** inspired by common engineering, procurement, and approval workflows.
+A personal **EPC (Engineering, Procurement, Construction) Project & Vendor Management portfolio and learning application**, built with C# and ASP.NET Core MVC.
+
+**Current status: Phase 1 COMPLETE; Phase 2 IN PROGRESS.** The C#/.NET 8 warm-up foundation is complete. The MVC application skeleton exists, and the Department CRUD vertical slice is partially implemented through Index, Create, Details, Edit, and Deactivate. Service extraction and meaningful application tests remain pending.
 
 > **Disclaimer:** This is a personal learning and portfolio project. It is **not affiliated with, built for, or used by any real company**. All business names, clients, vendors, and data are fictional.
 
-## Project Summary
+## Implemented / Verified in Source
 
-Large engineering and construction companies run internal software to track projects, the employees and vendors assigned to them, and the purchase/approval workflows that connect them. This application simulates that class of software as a full-stack ASP.NET Core MVC application.
+- **Completed — C#/.NET 8 foundation:** console exercises covering domain classes, encapsulation, LINQ, and async/await, plus three warm-up xUnit tests.
+- **Completed — application skeleton:** `EpcVendorManagement.slnx`, a .NET 8 MVC web project, and a separate xUnit application test project referencing the web project.
+- **Partially completed — Department vertical slice:** Index and navigation; Create and Edit forms with ViewModels, validation attributes, client validation scripts, server validation, duplicate-name checks, and Post/Redirect/Get; Details; POST Deactivate setting `IsActive` to false without deleting the record. State-changing actions have anti-forgery validation.
+- **Completed — persistence foundation in source:** `Department`, `ApplicationDbContext`, SQL Server provider registration, async EF Core queries/saves, and the `InitialCreate` migration with a unique department-name index. Local migration application still needs verification.
 
-It exists for two connected purposes:
+The application test project currently contains one empty template test, not Department behavior coverage. See [CURRENT_STATUS.md](CURRENT_STATUS.md) for verification limits and the next task.
 
-1. **Interview preparation** — practical revision of C#, ASP.NET Core MVC, Entity Framework Core, SQL Server, Bootstrap, jQuery, and Ajax for a Full Stack Developer role.
-2. **Portfolio** — a polished, honestly-documented enterprise-style application demonstrating professional development workflow.
+## Planned
 
-## Business Problem
+The intended business scope is a fictional EPC company's projects, departments, employees, vendors, assignments, and business approvals. These features remain **planned**:
 
-An EPC company needs to:
+- ASP.NET Core Identity login, roles, and server-side authorization
+- Employee, Vendor, and Project web modules (warm-up classes are learning exercises, not these modules)
+- Employee/vendor project assignments and conflict checks
+- Vendor registration approval workflow and status history
+- Audit fields, dashboard, reporting, search, filtering, and pagination
+- jQuery/Ajax partial page enhancements
+- Docker/Compose packaging and optional Azure deployment
 
-- Track projects, budgets, milestones, and statuses
-- Manage departments and employees
-- Register and evaluate vendors
-- Assign employees and vendors to projects without conflicts
-- Route business requests (e.g., vendor registration, purchase requests) through an approval workflow
-- Keep an audit history of who changed what and when
-- Report on projects, vendors, and pending approvals
-
-## Intended Users (Fictional Roles)
-
-- Administrator
-- Project Manager
-- Procurement Officer
-- General Employee
-
-(Role model may be refined — see `docs/DECISIONS.md`.)
-
-## Main Features (Planned)
-
-- Authentication and role-based authorization (ASP.NET Core Identity)
-- Department, Employee, Vendor, and Project management (CRUD)
-- Project assignments with duplicate/validity checks
-- Vendor registration request with an approval workflow (Draft → Submitted → Under Review → Approved/Rejected)
-- Dashboard with pending approvals and active projects
-- Search, filtering, sorting, and pagination
-- Audit fields and status history
-- Ajax-driven partial page updates (jQuery)
-- Reports (projects by status, vendors by category, pending requests)
+Intended fictional roles are Administrator, Project Manager, Procurement Officer, and General Employee. No demo accounts or deployed service are available here.
 
 ## Technology Stack
 
-| Layer | Technology |
+| Area | Current implementation / planned additions |
 |---|---|
-| Language | C# (.NET 8) |
-| Web framework | ASP.NET Core MVC |
-| Data access | Entity Framework Core |
-| Database | SQL Server |
-| Auth | ASP.NET Core Identity (cookies, roles, claims) |
-| Front end | Razor Views, HTML5, CSS3, Bootstrap, JavaScript, jQuery, Ajax |
-| Testing | xUnit |
-| Tooling | Visual Studio, .NET CLI, SSMS, Git, GitHub, GitHub Desktop, Docker (later), Azure fundamentals (later) |
+| Language and target | C#, .NET 8 (`net8.0` in all four projects) |
+| Web | ASP.NET Core MVC, Razor views |
+| Persistence | EF Core 8, SQL Server provider, code-first migration |
+| Front end | Bootstrap, JavaScript, jQuery validation; Ajax enhancements planned |
+| Testing | xUnit warm-up tests; application test-project foundation |
+| Authentication | ASP.NET Core Identity planned |
+| Deployment | Docker and Azure planned |
 
 ## Architecture Summary
 
-Single ASP.NET Core MVC web project with clear internal layering (Controllers → Services → EF Core → SQL Server), ViewModels for screens/forms, and a separate xUnit test project. The structure is deliberately simple and can evolve into multiple projects if the codebase justifies it. Full reasoning: `docs/ARCHITECTURE.md` and `docs/DECISIONS.md`.
+The repository has one MVC web project and one application test project, alongside the separate warm-up projects. Department forms use ViewModels; the current controller accesses `ApplicationDbContext` directly. Extracting Department queries and rules into services is the next architectural step in Phase 2.
+
+The intended flow is Controllers → Services → EF Core → SQL Server. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/DECISIONS.md](docs/DECISIONS.md) explain the direction; some supporting documentation still describes an earlier or proposed state. The implementation summary above reflects the inspected branch.
 
 ## Repository Layout
 
-```
-README.md            Project overview (this file)
-AGENTS.md            Rules for AI coding agents
-CLAUDE.md            Rules for Claude Code
-ROADMAP.md           Phased development plan
-CURRENT_STATUS.md    Live project status — read this first
-docs/                All other project documentation
-src/                 Application source (created in Phase 2)
-tests/               Test projects (created in Phase 2)
+```text
+EpcVendorManagement.slnx          Web + application test solution
+src/EpcVendorManagement.Web/      MVC application and Department module
+src/Warmup/                       C# console learning exercises
+tests/EpcVendorManagement.Tests/  Application test foundation (placeholder)
+tests/Warmup.Tests/               Three warm-up tests; outside the solution
+ROADMAP.md                        Phased development and learning plan
+CURRENT_STATUS.md                 Current progress and verification limits
+AGENTS.md / CLAUDE.md              Coding-agent guidance
+docs/                             Supporting project documentation
 ```
 
 ## Documentation Index
@@ -95,46 +80,49 @@ tests/               Test projects (created in Phase 2)
 
 ## Local Setup
 
-See [docs/SETUP.md](docs/SETUP.md). Short version (once the solution exists in Phase 2):
+Use a .NET SDK that supports the checked-in `.slnx` solution (the inspected environment uses SDK 10.0.301), with .NET 8 runtime support, SQL Server, and the EF Core 8 CLI tool. All projects target `net8.0`; SDK version and target framework are different. With an older SDK, restore/build the individual `.csproj` files instead of the `.slnx` file.
 
+From a fresh clone:
+
+```powershell
+git clone https://github.com/Saurabhzambare/epc-vendor-management.git
+cd epc-vendor-management
+git switch feature/solution-skeleton
+dotnet restore EpcVendorManagement.slnx
+dotnet build EpcVendorManagement.slnx
 ```
-git clone <repo-url>
-cd <repo>
-dotnet restore
-dotnet ef database update
-dotnet run --project src/EpcVendorManagement.Web
+
+Configure `ConnectionStrings:DefaultConnection` using user secrets for `src/EpcVendorManagement.Web`, or the `ConnectionStrings__DefaultConnection` environment variable. Use your own local SQL Server instance and database; do not commit connection strings or credentials. The web project already has a `UserSecretsId`.
+
+With the connection configured and `dotnet-ef` 8.x installed, apply the existing migration and run locally:
+
+```powershell
+dotnet ef database update --project src/EpcVendorManagement.Web --startup-project src/EpcVendorManagement.Web
+dotnet run --project src/EpcVendorManagement.Web --launch-profile https
 ```
 
-## Docker Setup
+Open the URL printed by the app and navigate to `/Departments`. The migration command changes your configured database. These setup steps were not verified end to end during this documentation cleanup.
 
-Planned for a later phase (see ROADMAP.md, Phase 8). Not yet available.
+[docs/SETUP.md](docs/SETUP.md) has additional Windows environment guidance, but its “nothing to run yet” wording is stale; use the existing project paths above. Docker setup is planned, not available.
 
 ## Running Tests
 
-Planned from Phase 2 onward: `dotnet test`
+```powershell
+dotnet test EpcVendorManagement.slnx
+dotnet test tests/Warmup.Tests/Warmup.Tests.csproj
+```
 
-## Demo Credentials
+The warm-up suite contains three substantive tests. The application suite contains only an empty template test, so a passing application test run would not establish Department correctness.
 
-Development-only seeded accounts will be documented here once Identity is implemented (Phase 3). Never real credentials.
+**Verification note:** The current implementation is present in source on `feature/solution-skeleton`. Runtime/database verification details and current testing limitations are documented in [CURRENT_STATUS.md](CURRENT_STATUS.md).
 
-## Screenshots
+## Learning and Interview Focus
 
-*To be added as features are completed.*
-
-## Current Status
-
-**Phase 0/1 — planning, environment setup, and interview fast-track.** No application code exists yet. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
-
-## Interview Concepts Demonstrated
-
-Will grow with the project. Target list: OOP, LINQ, async/await, MVC request lifecycle, dependency injection, EF Core relationships and migrations, SQL joins, Identity/roles, validation (client + server), jQuery/Ajax partial updates, anti-forgery/XSS/SQL-injection defenses, xUnit testing, Git workflow.
+Implemented source provides examples of C# classes, LINQ, async/await, MVC routing and model binding, dependency injection, form ViewModels, validation, EF Core migrations, and anti-forgery handling. Service-layer testing, Identity/roles, approval rules, Ajax, and deployment remain learning objectives in [ROADMAP.md](ROADMAP.md).
 
 ## Honest Limitations
 
-- Learning project: fictional data, no production users, no real deployments claimed
-- Features are only marked complete after they are implemented **and tested**
-- Scope is intentionally limited compared to real enterprise EPC software
-
-## Lessons Learned
-
-*Maintained as the project progresses.*
+- Fictional learning application with no production users or deployment claimed.
+- Department functionality is implemented in source but Phase 2 completion criteria are not yet met; service extraction, meaningful tests, and runtime verification remain.
+- Authentication and role restrictions are not implemented.
+- Screenshots and demo credentials can be added after the relevant features are verified.

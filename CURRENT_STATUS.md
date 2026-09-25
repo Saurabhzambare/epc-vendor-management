@@ -2,79 +2,87 @@
 
 > Read this file first in every session. Update it after every meaningful work session.
 
-**Last updated:** 2026-07-14
+**Last updated:** 2026-09-25
 
 ## Current Phase
 
-**Phase 1 — COMPLETE (2026-07-14). Phase 2 — Solution Skeleton + Department CRUD — starting.** (see ROADMAP.md)
+**Phase 1 — COMPLETE. Phase 2 — IN PROGRESS: Solution Skeleton + Department CRUD.**
+
+**Current branch:** `feature/solution-skeleton`
+**Inspected HEAD:** `71fc8e2` — `feat: add department details, edit, and deactivate actions`
 
 ## Current Objective
 
-Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project + xUnit test project, both explicitly targeting `net8.0` via `dotnet new -f net8.0` (per DECISIONS.md #005) — run the template app, and tour the generated files. Then the Department vertical slice: entity → DbContext → migration → CRUD screens → service extraction → tests.
+Finish the Department vertical slice by extracting service logic, adding meaningful Department tests, and verifying the screens and persistence against local SQL Server. The solution and Department Index/Create/Details/Edit/Deactivate implementation already exist; do not restart the skeleton work.
 
-**Interview timeline: expected within the week** — Phase 2 is the machine-test rehearsal; highest-value work.
+## Completed / Verified in Source
 
-**Phase 1 closure (2026-07-14, verified):** retarget to `net8.0` confirmed in both csproj files, tests re-passed 3/3 on net8.0, `fix: retarget warm-up projects to net8.0` pushed, `feature/csharp-warmup` merged to `main` (PR #2).
+- **Completed — Phase 1 foundation:** `src/Warmup` contains C# domain classes, LINQ exercises, encapsulation, and async/await; `tests/Warmup.Tests` contains three substantive xUnit tests. Both projects target `net8.0`. The previous status recorded owner-verified 3/3 passing tests on 2026-07-14; this is historical evidence, not a current run.
+- **Completed — solution foundation:** `EpcVendorManagement.slnx` includes `src/EpcVendorManagement.Web` and `tests/EpcVendorManagement.Tests`, both targeting `net8.0`. The test project references the web project. Warm-up projects remain outside this solution.
+- **Completed — database implementation in source:** Department entity, ApplicationDbContext, SQL Server provider registration, and `20260715111835_InitialCreate` migration with a unique department-name index.
+- **Partially completed — Department vertical slice:** Index with navigation and status display; Create with validated ViewModel and duplicate-name check; Details; Edit with validated ViewModel, ID checks, and duplicate-name check; POST Deactivate sets `IsActive = false`. Create/Edit/Deactivate use anti-forgery validation and redirect after successful saves. EF Core I/O is async.
+- **Completed — presentation cleanup:** README and this status file reconciled with current source and local commit history. No application code, tests, migrations, or roadmap changed.
 
-## Completed
+## Recent Implementation Evidence
 
-- **Phase 1, step 1 (2026-07-14, verified by Saurabh):** docs PR merged to `main`; `feature/csharp-warmup` branch created; `src/Warmup` console project created (`dotnet new console` → "created successfully", `dotnet run` → `Hello, World!`); top-level statements explained. Visual Studio "ASP.NET and web development" workload confirmed installed — Phase 2 fully unblocked.
-- **Phase 1, step 2 (2026-07-14, verified by Saurabh):** `Vendor` class written with enum category, getter-only `VendorCode`, nullable `ContactEmail`, constructor; used from `Program.cs` with a `List<Vendor>`, collection initializer, and string interpolation — correct filtered output confirmed. CS8618 nullable warning deliberately triggered and understood; encapsulation reasoning for the getter-only property articulated correctly. Concepts covered: properties, constructors, enums, nullable reference types, `var`, string interpolation.
-- **Phase 1, step 3 (2026-07-14, verified by Saurabh):** LINQ `Where`/`OrderBy`/`Select`/`ToList`/`FirstOrDefault` working in `Program.cs` with correct output; deferred-execution experiment run with a **correct written prediction** (vendor added after query definition appeared in results); "when does LINQ execute" answered correctly. Concepts covered: lambdas, LINQ method syntax, projection, deferred execution, `First` vs `FirstOrDefault`, ternary operator, `is null`.
-- **Phase 1, step 4 (2026-07-14, verified by Saurabh):** `Employee` and `Project` classes added; `GroupBy` (vendors per category) and `Join` (active projects with manager) produce correct output; both SQL twins hand-written correctly (GROUP BY with WHERE; INNER JOIN with alias + ON); orphan-project experiment answered fully (INNER drops it, LEFT JOIN keeps it with NULL manager). Concepts covered: `GroupBy`/`IGrouping`, aggregates, `Join`, FK-by-convention, object initializers, WHERE vs HAVING.
-- **Phase 1, step 5 (2026-07-14, verified by Saurabh — PHASE 1 DEFINITION OF DONE MET):** `IsActive` encapsulated behind `Deactivate()` (CS0272 compile error experienced and fixed — encapsulation enforced by compiler); async `VendorRegistry.LoadVendorsAsync` awaited from top-level statements (visible latency observed); `tests/Warmup.Tests` xUnit project created and referenced; **3/3 tests passing** (`Test summary: total: 3, failed: 0, succeeded: 3`). Concepts covered: async/await, `Task<T>`, top-level await, `[Fact]`, Arrange-Act-Assert, async tests.
-- **Finding from step 5 build output:** machine has the **.NET 10 SDK** (10.0.301, via VS 2026); templates created Warmup projects targeting `net10.0` instead of the project-standard `net8.0`. Decision + fix recorded as DECISIONS.md #005; retarget pending (see Current Objective).
+| Commit | Implemented change |
+|---|---|
+| `eb76028` | Solution, MVC web project, application test foundation |
+| `fb52099` | Department entity, DbContext, initial migration |
+| `58dc700` | Department Index and navigation |
+| `d948075` | Create form, ViewModel validation, Post/Redirect/Get |
+| `71fc8e2` | Details, Edit, and Deactivate |
 
-- Repository assessed: previously a Git-tutorial "Hello-World" repo with a single README and **no application code** — nothing to preserve except history.
-- Project purpose, roadmap, and architecture direction defined.
-- Documentation foundation created: README, ROADMAP, CURRENT_STATUS, AGENTS, CLAUDE at root; ARCHITECTURE, SETUP, DATABASE, TESTING, SECURITY, INTERVIEW_GUIDE, DECISIONS, PORTFOLIO_NOTES, API_AND_WORKFLOWS, UI_UX under `docs/`.
-- Initial architecture decision recorded (DECISIONS.md #001: single web project + test project).
-- .NET-appropriate `.gitignore` added.
-- **Phase 0 environment verification — COMPLETE (2026-07-14):**
-  - ✅ .NET 8 SDK `8.0.422` (x64)
-  - ✅ Git `2.55.0.windows.2`
-  - ✅ Windows 11 (build 10.0.28120), x64
-  - ✅ SQL Server 2025 Developer, **default instance** `MSSQLSERVER`, service Running → connection string uses `Server=localhost`
-  - ✅ SSMS 22 (22.7.2) connects to `localhost` via Windows Authentication (verified in Object Explorer)
-  - ✅ Visual Studio Community 2026 (18.7.3) installed
-  - ✅ GitHub Desktop installed, repo cloned (fetch of the docs branch pending)
-  - Note: `SQL Server Browser`/`Agent` services Stopped — normal; not needed for a default instance / this project
+## In Progress / Planned
 
-## In Progress
+- **Partially completed — Phase 2:** Department business rules and queries still live in the controller; service extraction is pending. The application test project contains only an empty `UnitTest1.Test1` placeholder, with no Department behavior tests.
+- **Planned — remaining verification:** browser/SQL Server checklist, validation and duplicate-name behavior, not-found handling, deactivation persistence, meaningful service tests, and the roadmap's timed rebuild exercise. Reactivation is not implemented.
+- **Planned — later phases:** Identity and roles; Employee/Vendor/Project web modules; assignments; approval workflow; audit history; dashboard/reports; Ajax enhancements; Docker and optional Azure deployment. Warm-up Employee/Project/Vendor classes do not constitute web modules.
 
-- Nothing — awaiting environment verification results from Saurabh.
+## Tests and Verification Limits
 
-## Known Issues / Blockers
+**Blocked — current build/test execution:** on 2026-09-25, the following commands were attempted before and after the documentation edits:
 
-- No blockers. Repo renamed to `epc-vendor-management` (done); VS workload confirmed; docs merged to `main` via PR #1.
+```powershell
+dotnet build EpcVendorManagement.slnx
+dotnet test EpcVendorManagement.slnx
+dotnet test tests/Warmup.Tests/Warmup.Tests.csproj
+```
 
-## Tests
+All stopped during restore because access to the user-level `NuGet.Config` was denied in this session. No tests executed and no current passing count is asserted. This is an environment access limitation, not an established source-code failure.
 
-- Passing: none exist yet (no code).
-- Failing: none.
-- Untested areas: everything — no application code exists. All feature claims in docs are **planned**, not built.
+**Verified — source inspection:** four projects target `net8.0`; three warm-up tests and one empty application placeholder are present. Department implementation and migration files match the recent commits above.
+
+**Untested runtime behavior:** database connectivity, applied migration state, and Department browser flows were not verified in this cleanup. Owner verification remains necessary; repository source alone cannot establish those results.
 
 ## Important Commands
 
+Run from the repository root; see README for setup prerequisites and connection configuration.
+
+```powershell
+git status --short --branch
+dotnet build EpcVendorManagement.slnx
+dotnet test EpcVendorManagement.slnx
+dotnet test tests/Warmup.Tests/Warmup.Tests.csproj
+dotnet ef database update --project src/EpcVendorManagement.Web --startup-project src/EpcVendorManagement.Web
+dotnet run --project src/EpcVendorManagement.Web --launch-profile https
 ```
-dotnet --version        # verify SDK (expect 8.x)
-git status              # check working tree before any change
-```
 
-(Real build/run/test commands arrive with Phase 2.)
+The inspected SDK is 10.0.301; projects target .NET 8 per decision #005. The existing `.slnx` needs a compatible SDK; individual `.csproj` paths are available for older SDKs. Applying the existing migration changes the configured local database; it was not run in this cleanup. No new migration was created.
 
-## Recent Decisions
+## Known Limitations / Owner Verification
 
-- DECISIONS.md #001 — Start with a single ASP.NET Core MVC project + one test project; split into layers only when justified.
-- DECISIONS.md #002 — First workflow will be the Vendor Registration Request.
-- Roadmap ordering rationale is in ROADMAP.md's preamble.
+- Resolve the local NuGet configuration access issue and rerun build/tests; then verify Department flows against SQL Server.
+- Authentication/role restrictions are not implemented; Phase 3 remains planned.
+- Supporting docs such as ARCHITECTURE.md, SETUP.md, and TESTING.md may still describe proposed or earlier states. They were outside this two-file cleanup; reconcile them in a follow-up without rewriting historical decisions or ROADMAP phase structure.
 
 ## Git State
 
-- Branch: `claude/epc-setup-roadmap-cx782w`
-- This commit: documentation foundation (no application code).
-- PR status: not yet opened.
+- Verified branch: `feature/solution-skeleton`.
+- Origin: `https://github.com/Saurabhzambare/epc-vendor-management.git`.
+- Working tree was clean at inspection; this cleanup changes only README.md and CURRENT_STATUS.md.
+- Remote PR/merge state was not verified. No commit or push performed.
 
-## Recommended Next Task
+## Recommended Next Task — Suggested
 
-**Retarget Warmup + Warmup.Tests to `net8.0`, re-run tests, commit, and merge `feature/csharp-warmup` to `main` via PR.** Then Phase 2 kickoff: create the `EpcVendorManagement` solution (net8.0) and begin the Department CRUD vertical slice.
+Complete Department service extraction and meaningful rule tests, then verify the browser/database checklist and update the owning architecture, database, and testing docs. Phase 2 remains in progress until its completion criteria are verified.
