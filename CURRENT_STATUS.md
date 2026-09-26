@@ -2,19 +2,19 @@
 
 > Read this file first in every session. Update it after every meaningful work session.
 
-**Last updated:** 2026-07-14
+**Last updated:** 2026-09-26
 
 ## Current Phase
 
-**Phase 1 — COMPLETE (2026-07-14). Phase 2 — Solution Skeleton + Department CRUD — starting.** (see ROADMAP.md)
+**Phase 1 — PARTIALLY COMPLETE.** The verified warm-up covers domain classes, LINQ, async/await, and xUnit; the roadmap's `IApprovable` interface exercise remains outstanding. Phase 2 has not started. (see ROADMAP.md)
 
 ## Current Objective
 
-Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project + xUnit test project, both explicitly targeting `net8.0` via `dotnet new -f net8.0` (per DECISIONS.md #005) — run the template app, and tour the generated files. Then the Department vertical slice: entity → DbContext → migration → CRUD screens → service extraction → tests.
+Complete the remaining Phase 1 `IApprovable` interface exercise and verify it before starting Phase 2. Phase 2 will create the `EpcVendorManagement` solution and begin the Department vertical slice in the order defined by the roadmap.
 
 **Interview timeline: expected within the week** — Phase 2 is the machine-test rehearsal; highest-value work.
 
-**Phase 1 closure (2026-07-14, verified):** retarget to `net8.0` confirmed in both csproj files, tests re-passed 3/3 on net8.0, `fix: retarget warm-up projects to net8.0` pushed, `feature/csharp-warmup` merged to `main` (PR #2).
+**Verified warm-up checkpoint (2026-07-14):** retarget to `net8.0` confirmed in both csproj files, tests re-passed 3/3 on net8.0, `fix: retarget warm-up projects to net8.0` pushed, and `feature/csharp-warmup` merged to `main` (PR #2). This checkpoint did not include the roadmap's interface exercise.
 
 ## Completed
 
@@ -22,8 +22,8 @@ Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project +
 - **Phase 1, step 2 (2026-07-14, verified by Saurabh):** `Vendor` class written with enum category, getter-only `VendorCode`, nullable `ContactEmail`, constructor; used from `Program.cs` with a `List<Vendor>`, collection initializer, and string interpolation — correct filtered output confirmed. CS8618 nullable warning deliberately triggered and understood; encapsulation reasoning for the getter-only property articulated correctly. Concepts covered: properties, constructors, enums, nullable reference types, `var`, string interpolation.
 - **Phase 1, step 3 (2026-07-14, verified by Saurabh):** LINQ `Where`/`OrderBy`/`Select`/`ToList`/`FirstOrDefault` working in `Program.cs` with correct output; deferred-execution experiment run with a **correct written prediction** (vendor added after query definition appeared in results); "when does LINQ execute" answered correctly. Concepts covered: lambdas, LINQ method syntax, projection, deferred execution, `First` vs `FirstOrDefault`, ternary operator, `is null`.
 - **Phase 1, step 4 (2026-07-14, verified by Saurabh):** `Employee` and `Project` classes added; `GroupBy` (vendors per category) and `Join` (active projects with manager) produce correct output; both SQL twins hand-written correctly (GROUP BY with WHERE; INNER JOIN with alias + ON); orphan-project experiment answered fully (INNER drops it, LEFT JOIN keeps it with NULL manager). Concepts covered: `GroupBy`/`IGrouping`, aggregates, `Join`, FK-by-convention, object initializers, WHERE vs HAVING.
-- **Phase 1, step 5 (2026-07-14, verified by Saurabh — PHASE 1 DEFINITION OF DONE MET):** `IsActive` encapsulated behind `Deactivate()` (CS0272 compile error experienced and fixed — encapsulation enforced by compiler); async `VendorRegistry.LoadVendorsAsync` awaited from top-level statements (visible latency observed); `tests/Warmup.Tests` xUnit project created and referenced; **3/3 tests passing** (`Test summary: total: 3, failed: 0, succeeded: 3`). Concepts covered: async/await, `Task<T>`, top-level await, `[Fact]`, Arrange-Act-Assert, async tests.
-- **Finding from step 5 build output:** machine has the **.NET 10 SDK** (10.0.301, via VS 2026); templates created Warmup projects targeting `net10.0` instead of the project-standard `net8.0`. Decision + fix recorded as DECISIONS.md #005; retarget pending (see Current Objective).
+- **Phase 1, step 5 checkpoint (2026-07-14, verified by Saurabh):** `IsActive` encapsulated behind `Deactivate()` (CS0272 compile error experienced and fixed — encapsulation enforced by compiler); async `VendorRegistry.LoadVendorsAsync` awaited from top-level statements (visible latency observed); `tests/Warmup.Tests` xUnit project created and referenced; **3/3 tests passing** (`Test summary: total: 3, failed: 0, succeeded: 3`). Concepts covered: async/await, `Task<T>`, top-level await, `[Fact]`, Arrange-Act-Assert, async tests. The roadmap's interface exercise remains outstanding.
+- **Finding from step 5 build output:** machine has the **.NET 10 SDK** (10.0.301, via VS 2026); templates initially created Warmup projects targeting `net10.0`. Decision + completed retarget to `net8.0` are recorded in DECISIONS.md #005.
 
 - Repository assessed: previously a Git-tutorial "Hello-World" repo with a single README and **no application code** — nothing to preserve except history.
 - Project purpose, roadmap, and architecture direction defined.
@@ -42,22 +42,24 @@ Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project +
 
 ## In Progress
 
-- Nothing — awaiting environment verification results from Saurabh.
+- No implementation work is currently in progress. The remaining Phase 1 interface exercise is the next implementation task.
 
 ## Known Issues / Blockers
 
-- No blockers. Repo renamed to `epc-vendor-management` (done); VS workload confirmed; docs merged to `main` via PR #1.
+- Phase 1 cannot be marked complete until the roadmap's `IApprovable` interface exercise is implemented and verified. This is a scope item, not an environment blocker.
 
 ## Tests
 
-- Passing: none exist yet (no code).
+- Passing: 3 xUnit warm-up tests covering vendor defaults, deactivation, and asynchronous vendor loading.
 - Failing: none.
-- Untested areas: everything — no application code exists. All feature claims in docs are **planned**, not built.
+- Untested/unimplemented areas: the ASP.NET Core MVC application, persistence, Identity, and business workflows. Those capabilities remain **planned**, not built.
 
 ## Important Commands
 
 ```
 dotnet --version        # verify SDK (expect 8.x)
+dotnet run --project src/Warmup
+dotnet test tests/Warmup.Tests
 git status              # check working tree before any change
 ```
 
@@ -71,10 +73,9 @@ git status              # check working tree before any change
 
 ## Git State
 
-- Branch: `claude/epc-setup-roadmap-cx782w`
-- This commit: documentation foundation (no application code).
-- PR status: not yet opened.
+- Public default branch: `main`.
+- Phase 1 warm-up work was merged through PR #2.
 
 ## Recommended Next Task
 
-**Retarget Warmup + Warmup.Tests to `net8.0`, re-run tests, commit, and merge `feature/csharp-warmup` to `main` via PR.** Then Phase 2 kickoff: create the `EpcVendorManagement` solution (net8.0) and begin the Department CRUD vertical slice.
+Complete and verify the remaining Phase 1 `IApprovable` interface exercise. After Phase 1 meets its roadmap definition, begin the Phase 2 MVC solution and Department CRUD vertical slice.

@@ -1,6 +1,6 @@
 # TESTING
 
-**Status:** Strategy defined; no tests exist yet (no code exists). First tests arrive in Phase 1 (warm-up) and Phase 2 (Department service).
+**Status:** Strategy defined; three Phase 1 warm-up tests currently pass. Application-level tests begin with the Phase 2 Department service.
 
 ## Strategy
 
