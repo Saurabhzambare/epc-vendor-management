@@ -2,7 +2,7 @@
 
 > Read this file first in every session. Update it after every meaningful work session.
 
-**Last updated:** 2026-07-14
+**Last updated:** 2026-09-26
 
 ## Current Phase
 
@@ -10,7 +10,7 @@
 
 ## Current Objective
 
-Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project + xUnit test project, both explicitly targeting `net8.0` via `dotnet new -f net8.0` (per DECISIONS.md #005) — run the template app, and tour the generated files. Then the Department vertical slice: entity → DbContext → migration → CRUD screens → service extraction → tests.
+Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project + xUnit test project, both explicitly targeting `net8.0` via `dotnet new -f net8.0` (per DECISIONS.md #005) — run the template app, and tour the generated files. Then implement the Department vertical slice: entity → DbContext → migration → CRUD screens → service extraction → tests.
 
 **Interview timeline: expected within the week** — Phase 2 is the machine-test rehearsal; highest-value work.
 
@@ -42,7 +42,7 @@ Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project +
 
 ## In Progress
 
-- Nothing — awaiting environment verification results from Saurabh.
+- No implementation work is currently in progress. Phase 1 evidence is complete and Phase 2 is ready to begin.
 
 ## Known Issues / Blockers
 
@@ -50,14 +50,16 @@ Phase 2, step 1: create the `EpcVendorManagement` solution — MVC web project +
 
 ## Tests
 
-- Passing: none exist yet (no code).
+- Passing: 3 xUnit warm-up tests covering vendor defaults, deactivation, and asynchronous vendor loading.
 - Failing: none.
-- Untested areas: everything — no application code exists. All feature claims in docs are **planned**, not built.
+- Untested/unimplemented areas: the ASP.NET Core MVC application, persistence, Identity, and business workflows. Those capabilities remain **planned**, not built.
 
 ## Important Commands
 
 ```
 dotnet --version        # verify SDK (expect 8.x)
+dotnet run --project src/Warmup
+dotnet test tests/Warmup.Tests
 git status              # check working tree before any change
 ```
 
@@ -71,10 +73,9 @@ git status              # check working tree before any change
 
 ## Git State
 
-- Branch: `claude/epc-setup-roadmap-cx782w`
-- This commit: documentation foundation (no application code).
-- PR status: not yet opened.
+- Public default branch: `main`.
+- Phase 1 warm-up work was merged through PR #2.
 
 ## Recommended Next Task
 
-**Retarget Warmup + Warmup.Tests to `net8.0`, re-run tests, commit, and merge `feature/csharp-warmup` to `main` via PR.** Then Phase 2 kickoff: create the `EpcVendorManagement` solution (net8.0) and begin the Department CRUD vertical slice.
+Begin Phase 2 by creating the `EpcVendorManagement` MVC solution and xUnit project on `net8.0`, then start the Department CRUD vertical slice in the controlled order documented above.

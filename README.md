@@ -6,7 +6,9 @@ An enterprise-style **EPC (Engineering, Procurement, Construction) project and v
 
 ## Project Summary
 
-Large engineering and construction companies run internal software to track projects, the employees and vendors assigned to them, and the purchase/approval workflows that connect them. This application simulates that class of software as a full-stack ASP.NET Core MVC application.
+Large engineering and construction companies run internal software to track projects, the employees and vendors assigned to them, and the purchase/approval workflows that connect them. This repository is designed to grow into that class of full-stack ASP.NET Core MVC application.
+
+The implemented code currently provides a tested .NET 8 C# foundation: vendor, employee, and project domain exercises; LINQ filtering, grouping, and joins; asynchronous loading; and xUnit tests. The MVC application, persistence, Identity, and business workflows remain approved design and roadmap work rather than implemented features.
 
 It exists for two connected purposes:
 
@@ -46,7 +48,7 @@ An EPC company needs to:
 - Ajax-driven partial page updates (jQuery)
 - Reports (projects by status, vendors by category, pending requests)
 
-## Technology Stack
+## Approved Target Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -59,9 +61,11 @@ An EPC company needs to:
 | Testing | xUnit |
 | Tooling | Visual Studio, .NET CLI, SSMS, Git, GitHub, GitHub Desktop, Docker (later), Azure fundamentals (later) |
 
+Current verified code evidence uses C#, .NET 8, LINQ, async/await, and xUnit. The other technologies in this table describe the approved application direction and must not be presented as implemented until the corresponding source exists.
+
 ## Architecture Summary
 
-Single ASP.NET Core MVC web project with clear internal layering (Controllers → Services → EF Core → SQL Server), ViewModels for screens/forms, and a separate xUnit test project. The structure is deliberately simple and can evolve into multiple projects if the codebase justifies it. Full reasoning: `docs/ARCHITECTURE.md` and `docs/DECISIONS.md`.
+The approved architecture is a single ASP.NET Core MVC web project with clear internal layering (Controllers → Services → EF Core → SQL Server), ViewModels for screens/forms, and a separate xUnit test project. This is documented design direction; the current repository has not yet implemented that MVC structure. Full reasoning: `docs/ARCHITECTURE.md` and `docs/DECISIONS.md`.
 
 ## Repository Layout
 
@@ -72,8 +76,8 @@ CLAUDE.md            Rules for Claude Code
 ROADMAP.md           Phased development plan
 CURRENT_STATUS.md    Live project status — read this first
 docs/                All other project documentation
-src/                 Application source (created in Phase 2)
-tests/               Test projects (created in Phase 2)
+src/                 Current .NET 8 warm-up source; future MVC application source
+tests/               Current xUnit warm-up tests; future application tests
 ```
 
 ## Documentation Index
@@ -109,9 +113,14 @@ dotnet run --project src/EpcVendorManagement.Web
 
 Planned for a later phase (see ROADMAP.md, Phase 8). Not yet available.
 
-## Running Tests
+## Running the Current Code and Tests
 
-Planned from Phase 2 onward: `dotnet test`
+```bash
+dotnet run --project src/Warmup
+dotnet test tests/Warmup.Tests
+```
+
+The current tests cover the warm-up vendor model and asynchronous vendor loading. Application-level MVC, persistence, authorization, and workflow tests will be added only when those features are implemented.
 
 ## Demo Credentials
 
@@ -123,11 +132,11 @@ Development-only seeded accounts will be documented here once Identity is implem
 
 ## Current Status
 
-**Phase 0/1 — planning, environment setup, and interview fast-track.** No application code exists yet. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
+**Phase 1 complete; Phase 2 is ready to start.** The repository contains tested .NET 8 warm-up code and approved application design documentation. The ASP.NET Core MVC solution and business workflows are not implemented yet. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
 
 ## Interview Concepts Demonstrated
 
-Will grow with the project. Target list: OOP, LINQ, async/await, MVC request lifecycle, dependency injection, EF Core relationships and migrations, SQL joins, Identity/roles, validation (client + server), jQuery/Ajax partial updates, anti-forgery/XSS/SQL-injection defenses, xUnit testing, Git workflow.
+Current code demonstrates OOP, encapsulation, nullable reference types, LINQ, SQL-oriented join/grouping concepts, async/await, and xUnit testing. Planned application work will add MVC request lifecycle, dependency injection, EF Core relationships and migrations, Identity/roles, validation, jQuery/Ajax partial updates, and web-security controls.
 
 ## Honest Limitations
 
