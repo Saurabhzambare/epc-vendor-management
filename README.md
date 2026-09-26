@@ -132,7 +132,7 @@ Development-only seeded accounts will be documented here once Identity is implem
 
 ## Current Status
 
-**Phase 1 complete; Phase 2 is ready to start.** The repository contains tested .NET 8 warm-up code and approved application design documentation. The ASP.NET Core MVC solution and business workflows are not implemented yet. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
+**Phase 1 is partially complete.** The repository contains tested .NET 8 domain-class, LINQ, async/await, and xUnit warm-up work. The roadmap's `IApprovable` interface exercise remains outstanding, and Phase 2 has not started. The ASP.NET Core MVC solution and business workflows are not implemented yet. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
 
 ## Interview Concepts Demonstrated
 
